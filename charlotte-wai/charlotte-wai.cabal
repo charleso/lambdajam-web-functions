@@ -1,0 +1,45 @@
+name:                  charlotte-wai
+version:               0.0.1
+license:               AllRightsReserved
+author:                Charles O'Farrell <charleso@charleso.org>
+maintainer:            Charles O'Farrell <charleso@charleso.org>
+copyright:             (c) 2017 Charles O'Farrell.
+synopsis:              charlotte-wai
+category:              System
+cabal-version:         >= 1.8
+build-type:            Simple
+description:           charlotte-wai
+
+library
+  build-depends:
+                      base                            >= 3          && < 5
+                    , cookie                          == 0.4.*
+                    , http-types                      == 0.9.*
+                    , text                            == 1.2.*
+                    , wai                             == 3.0.*
+
+  ghc-options:
+                    -Wall
+
+  hs-source-dirs:
+                    src
+
+  exposed-modules:
+                    Charlotte.Wai
+
+
+executable charlotte-wai
+  ghc-options:
+                    -Wall -threaded -O2
+                    -rtsopts -with-rtsopts "-T -N"
+
+  hs-source-dirs:   main
+
+  main-is:
+                    charlotte-wai.hs
+
+  build-depends:
+                      base
+                    , charlotte-wai
+                    , wai-extra                       == 3.0.*
+                    , warp                            == 3.0.*
