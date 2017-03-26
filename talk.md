@@ -319,7 +319,7 @@ getHeader name = do
 ```
 
 ```haskell
-request :: Monad m => ActionT e m Request
+request :: Monad m => ActionT m Request
 ```
 
 ---
@@ -426,7 +426,7 @@ class: center, middle, section-aqua, heading-white
 
 ```haskell
 addHeader :: Monad m => Header ->
-  ActionT e m ()
+  ActionT m ()
 ```
 
 ---
