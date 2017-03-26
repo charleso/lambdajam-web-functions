@@ -96,9 +96,9 @@ routes notFound req =
 
 > A Haskell web framework inspired by Ruby's Sinatra, using WAI and Warp.
 
----
+https://hackage.haskell.org/package/scotty
 
-## Scotty
+???
 
 This is _not_ about critising Scotty, it's just one example
 
@@ -463,11 +463,16 @@ addHeader :: Monad m => Header -> ActionT e m ()
 TODO
 
 - How would you test?
-- Why do you need Request when it's not used?
 
 ---
 
 ## Add Header (Scotty)
+
+```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
 
 ```haskell
 addHeader :: Monad m => ActionT m ()
@@ -480,6 +485,12 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
+
+```haskell
 addHeader :: Monad m => Header -> ReaderT Request (StateT Response m) ()
 addHeader header =
   modify (\response -> addHeaderWai header response)
@@ -490,6 +501,12 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
+
+```haskell
 addHeader :: Monad m => Header -> Request -> StateT Response m ()
 addHeader header req =
   modify (\response -> addHeaderWai header response)
@@ -498,6 +515,12 @@ addHeader header req =
 ---
 
 ## Add Header (Scotty unrolled)
+
+```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
 
 ```haskell
 addHeader :: Monad m => Header -> Request -> StateT Response m ()
@@ -518,6 +541,12 @@ Failing due to -Werror.
 ## Add Header (Scotty unrolled)
 
 ```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
+
+```haskell
 addHeader :: Monad m => Header -> StateT Response m ()
 addHeader header =
   modify (\response -> addHeaderWai header response)
@@ -528,12 +557,15 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Monad m => Header -> Response -> Response
-addHeader header response =
-  response {
-      responseHeaders =
-        header : responseHeaders response
-    }
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
+```
+
+```haskell
+addHeader :: Header -> Response -> Response
+addHeader h r =
+  response { responseHeaders = r : responseHeaders r }
 ```
 
 ---
@@ -541,21 +573,17 @@ addHeader header response =
 ## Add Header (Wai + Scotty)
 
 ```haskell
-addHeader :: Monad m => Header -> Response -> Response
-addHeader header response =
-  response {
-      responseHeaders =
-        header : responseHeaders response
-    }
+addHeader :: Header -> Response -> Response
 ```
 
 ```haskell
-modify (addHeader cookieHeader)
+modifyResponse :: (Response -> Response) -> ActionT m ()
 ```
 
 ```haskell
-modify :: (Response -> Response) -> ActionT m ()
+modifyResponse (addHeader cookieHeader)
 ```
+
 
 ---
 
