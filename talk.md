@@ -78,64 +78,6 @@ interface HttpServlet {
 
 ---
 
-## Routing
-
-```haskell
-routes :: Application
-routes req =
-  case pathInfo req of
-    [] ->
-      home req
-    ["login"] ->
-      login request
-    ["profile", user] ->
-      profile user req
-    _ ->
-      error "Not found"
-```
-
----
-
-## Routing
-
-```haskell
-routes :: Request -> IO Response
-routes req =
-  case pathInfo req of
-    [] ->
-      home req
-    ["login"] ->
-      login request
-    ["profile", user] ->
-      profile user req
-    _ ->
-      error "Not found"
-```
-
-```haskell
-pathInfo :: Request -> [Text]
-```
-
----
-
-## Routing
-
-```haskell
-routes :: (Request -> IO Response) -> Request -> IO Response
-routes notFound req =
-  case pathInfo req of
-    [] ->
-      home req
-    ["login"] ->
-      login request
-    ["profile", user] ->
-      profile user req
-    _ ->
-      notFound req
-```
-
----
-
 ## Scotty
 
 > A Haskell web framework inspired by Ruby's Sinatra, using WAI and Warp.
@@ -183,7 +125,7 @@ routes = do
 ```
 500 Internal Server Error
 
-Param: user2 not found!
+Param: username not found!
 ```
 
 ???
@@ -208,7 +150,7 @@ routes = do
 
 profileGet :: ActionT m ()
 profileGet =
-  name <- param "user2"
+  name <- param "username"
   ...
 ```
 
@@ -234,6 +176,65 @@ routes = do
 
 - What tradeoffs are we making?
 - Nice syntax doesn't make it safe
+
+---
+
+## Routing
+
+```haskell
+routes :: Application
+routes req =
+  case pathInfo req of
+    [] ->
+      home req
+    ["login"] ->
+      login request
+    ["profile", user] ->
+      profile user req
+    _ ->
+      error "Not found"
+```
+
+---
+
+## Routing
+
+```haskell
+routes :: Request -> IO Response
+routes req =
+  case pathInfo req of
+    [] ->
+      home req
+    ["login"] ->
+      login request
+    ["profile", user] ->
+      profile user req
+    _ ->
+      error "Not found"
+```
+
+```haskell
+pathInfo :: Request -> [Text]
+```
+
+---
+
+## Routing
+
+```haskell
+routes :: (Request -> IO Response) ->
+  Request -> IO Response
+routes notFound req =
+  case pathInfo req of
+    [] ->
+      home req
+    ["login"] ->
+      login request
+    ["profile", user] ->
+      profile user req
+    _ ->
+      notFound req
+```
 
 ---
 
@@ -301,7 +302,8 @@ class: center, middle, section-aqua, heading-white
 ## Get Header (Scotty)
 
 ```haskell
-getHeader :: Monad m => Text -> ActionT m (Maybe Text)
+getHeader :: Monad m => Text ->
+  ActionT m (Maybe Text)
 ```
 
 ---
@@ -471,7 +473,7 @@ addHeader h =
 addHeader :: Monad m => Header ->
   Request -> StateT Response m ()
 addHeader h req =
-  modify (\resp
+  modify (\resp ->
     resp { responseHeaders = h : responseHeaders resp }
   )
 ```
