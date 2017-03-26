@@ -33,7 +33,7 @@ evaluate the cost of the libraries they inhabit.
 
 ## Talk
 
-[talk](talk.md)
+http://blog.charleso.org/lambdajam-web-functions/
 
 
 ## Code

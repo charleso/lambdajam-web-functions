@@ -13,6 +13,7 @@ description:           charlotte-wai
 library
   build-depends:
                       base                            >= 3          && < 5
+                    , bytestring                      == 0.10.*
                     , cookie                          == 0.4.*
                     , http-types                      == 0.9.*
                     , text                            == 1.2.*
@@ -25,6 +26,7 @@ library
                     src
 
   exposed-modules:
+                    Charlotte.App
                     Charlotte.Wai
 
 
@@ -41,5 +43,7 @@ executable charlotte-wai
   build-depends:
                       base
                     , charlotte-wai
+                    , http-types
+                    , wai
                     , wai-extra                       == 3.0.*
                     , warp                            == 3.0.*
