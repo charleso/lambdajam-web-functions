@@ -563,6 +563,7 @@ class: center, middle, section-yellow, heading-black
 ---
 
 class: center, middle, section-aqua, heading-white
+background-image: url(http://vignette1.wikia.nocookie.net/lego/images/d/d0/Scribble-Face_Bad_Cop.jpg)
 
 # Good Functions
 
