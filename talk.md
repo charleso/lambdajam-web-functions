@@ -115,9 +115,8 @@ routes = do
     loginGet
   post "/login" $
     loginPost
-  get "/profile/:user" $ do
-    name <- param "user2"
-    profileGet name
+  get "/profile/:user" $
+    profileGet
 ```
 
 ---
@@ -133,9 +132,13 @@ routes = do
     loginGet
   post "/login" $
     loginPost
-  get "/profile/:user" $ do
-    name <- param "user2"
-    profileGet name
+  get "/profile/:user" $
+    profileGet
+
+profileGet :: ActionT m ()
+profileGet =
+  name <- param "user2"
+  ...
 ```
 
 ???
@@ -228,7 +231,7 @@ class: center, middle, section-aqua, heading-white
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
@@ -239,7 +242,7 @@ getCookie name req = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
@@ -257,7 +260,7 @@ getCookie name = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
@@ -280,7 +283,7 @@ getCookie "foo"
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
@@ -298,14 +301,14 @@ getCookie name = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
 ```haskell
 getCookie :: Monad m => Text -> Request -> StateT Response m (Maybe Text)
 getCookie name req = do
-  c <- lookup "Cookie" . Wai.requestHeaders $ req
+  c <- return . lookup "Cookie" . requestHeaders $ req
   return . lookup name $ parseCookies c
 ```
 
@@ -316,14 +319,14 @@ getCookie name req = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
 ```haskell
 getCookie :: Monad m => Text -> Request -> Response -> m (Response, Maybe Text)
 getCookie name req resp = do
-  c <- lookup "Cookie" . Wai.requestHeaders $ req
+  c <- return . lookup "Cookie" . requestHeaders $ req
   return (resp, lookup name $ parseCookies c)
 ```
 
@@ -334,14 +337,14 @@ getCookie name req resp = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
 ```haskell
 getCookie :: Monad m => Text -> Request -> m (Maybe Text)
 getCookie name req = do
-  c <- lookup "Cookie" . Wai.requestHeaders $ req
+  c <- return . lookup "Cookie" . requestHeaders $ req
   return (lookup name $ parseCookies c)
 ```
 
@@ -352,14 +355,14 @@ getCookie name req = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
-  c <- lookup "Cookie" . Wai.requestHeaders $ req
+  c <- lookup "Cookie" . requestHeaders $ req
   lookup name $ parseCookies c
 ```
 
@@ -370,16 +373,16 @@ getCookie name req = do
 ```haskell
 getCookie :: Text -> Request -> Maybe Text
 getCookie name req = do
- c <- lookup "Cookie" . Wai.requestHeaders $ req
+ c <- lookup "Cookie" . requestHeaders $ req
  lookup name $ parseCookies c
 ```
 
 ```haskell
-getCookie "foo" <$> request
+request :: Monad m => ActionT e m Request
 ```
 
 ```haskell
-request :: Monad m => ActionT e m Request
+getCookie "foo" <$> request
 ```
 
 ---
