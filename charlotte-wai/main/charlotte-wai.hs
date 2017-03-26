@@ -56,7 +56,7 @@ login req resp =
           loginView Nothing
 
 home :: Session -> Application
-home session _req resp =
+home session req resp =
   resp $
     redirect ["profile", renderUser (sessionUser session)]
 

@@ -38,5 +38,18 @@ http://blog.charleso.org/lambdajam-web-functions/
 
 ## Code
 
+The following are some examples of the same application written
+against different libraries.
+
 - [wai](charlotte-wai/)
 - [scotty](charlotte-scotty/)
+
+### Running
+
+To run with [mafia](https://github.com/ambiata/mafia):
+
+```
+cd charlotte-???
+./mafia quick -p main/charlottle-???.hs
+> main
+```
