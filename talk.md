@@ -14,6 +14,9 @@ background-image: url(images/ambiata-chopsticks.png)
 ## What do we expect from a web framework?
 
 - Routing
+  - Path
+  - Method
+- Request Parsing
 - Response Building
 - Error handling?
 - Content Type Negotiation?
@@ -44,6 +47,14 @@ type Application =
 
 ---
 
+## Wai Simplified
+
+```haskell
+type Application = Request -> IO Response
+```
+
+---
+
 ## [Servlet](https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServlet.html)
 
 ```java
@@ -54,14 +65,6 @@ interface HttpServlet {
     HttpServletResponse resp
   );
 }
-```
-
----
-
-## Wai Simplified
-
-```haskell
-type Application = Request -> IO Response
 ```
 
 
@@ -76,7 +79,47 @@ type Application = Request -> IO Response
 
 ## Routing
 
+```haskell
+routes :: Application
+routes req =
+  case pathInfo req of
+    [] ->
+      home req
+    ["login"] ->
+      login request
+    ["profile", user] ->
+      profile user req
+    _ ->
+      error "Not found"
 ```
+
+---
+
+## Routing
+
+```haskell
+routes :: Request -> IO Response
+routes req =
+  case pathInfo req of
+    [] ->
+      home req
+    ["login"] ->
+      login request
+    ["profile", user] ->
+      profile user req
+    _ ->
+      error "Not found"
+```
+
+```haskell
+pathInfo :: Request -> [Text]
+```
+
+---
+
+## Routing
+
+```haskell
 routes :: (Request -> IO Response) -> Request -> IO Response
 routes notFound req =
   case Wai.pathInfo req of
@@ -134,16 +177,39 @@ routes = do
     loginPost
   get "/profile/:user" $
     profileGet
+```
+
+```
+500 Internal Server Error
+
+Param: user2 not found!
+```
+
+???
+
+TODO highlight error
+
+---
+
+## Routing: Scotty (Bug)
+
+```haskell
+routes :: ScottyM ()
+routes = do
+  get "/" $
+    homeGet
+  get "/login" $
+    loginGet
+  post "/login" $
+    loginPost
+  get "/profile/:user" $
+    profileGet
 
 profileGet :: ActionT m ()
 profileGet =
   name <- param "user2"
   ...
 ```
-
-???
-
-TODO highlight error
 
 ---
 
@@ -162,6 +228,11 @@ routes = do
     name <- param "user"
     profileGet name
 ```
+
+???
+
+- What tradeoffs are we making?
+- Nice syntax doesn't make it safe
 
 ---
 
@@ -288,7 +359,7 @@ getCookie name req = do
 ```
 
 ```haskell
-getCookie :: Monad m => Text -> RequestT (StateT Response m) (Maybe Text)
+getCookie :: Monad m => Text -> ReaderT Request (StateT Response m) (Maybe Text)
 getCookie name = do
   c <- header "Cookie"
   return . lookup name $ parseCookies c
@@ -440,10 +511,7 @@ addHeader header response =
 ```
 
 ```haskell
-data Response {
-  ...
-  , responseHeaders :: [Header]
-  }
+responseHeaders :: Response -> [Header]
 ```
 
 
@@ -611,6 +679,8 @@ class: center, middle, section-yellow, heading-black
 
 ---
 
+class: center, middle, section-aqua, heading-white
+
 # Good Functions
 
 ---
@@ -618,7 +688,7 @@ class: center, middle, section-yellow, heading-black
 ## Good Functions
 
 - Be precise
-- Compiler warings should be errors
+- Compiler warnings should be errors
 - Composition
 
 ---
