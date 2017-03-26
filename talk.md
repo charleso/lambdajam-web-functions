@@ -122,7 +122,7 @@ pathInfo :: Request -> [Text]
 ```haskell
 routes :: (Request -> IO Response) -> Request -> IO Response
 routes notFound req =
-  case Wai.pathInfo req of
+  case pathInfo req of
     [] ->
       home req
     ["login"] ->
