@@ -50,7 +50,8 @@ type Application =
 ## Wai Simplified
 
 ```haskell
-type Application = Request -> IO Response
+type Application =
+  Request -> IO Response
 ```
 
 ---
