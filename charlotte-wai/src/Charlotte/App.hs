@@ -7,10 +7,8 @@ module Charlotte.App (
   , htmlTemplate
   ) where
 
-import qualified Data.ByteString.Lazy as BSL
 import           Data.Monoid ((<>))
 import           Data.Text (Text)
-import qualified Data.Text.Encoding as T
 
 newtype User =
   User {
@@ -23,12 +21,12 @@ data Session =
     } deriving (Eq, Show)
 
 -- TODO Use blaze I guess
-type Html = BSL.ByteString
+type Html = Text
 
 loginView :: Maybe Text -> Html
 loginView e =
   htmlTemplate . mconcat $ [
-      maybe "" (\e' -> BSL.fromStrict . T.encodeUtf8 $ "<div style=\"color: red;\">" <> e' <> "</div") e
+      maybe "" (\e' -> "<div style=\"color: red;\">" <> e' <> "</div") e
     , "<form method=\"POST\" action=\"/login\">"
     , "  <input name=\"username\" />"
     , "</form>"

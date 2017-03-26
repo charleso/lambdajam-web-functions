@@ -26,7 +26,7 @@ import qualified Web.Cookie as Cookie
 
 html :: Status -> Html -> Response
 html status =
-  Wai.responseLBS status [(HTTP.hContentType, "text/html; charset=utf-8")]
+  Wai.responseLBS status [(HTTP.hContentType, "text/html; charset=utf-8")] . BSL.fromStrict . T.encodeUtf8
 
 ------
 

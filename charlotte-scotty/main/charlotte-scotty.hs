@@ -67,5 +67,4 @@ secure f = do
 
 html' :: Html -> ActionM ()
 html' =
-  -- TODO Should be text, not bytestring, if nothing else
-  html . TL.decodeUtf8
+  html . TL.fromStrict
