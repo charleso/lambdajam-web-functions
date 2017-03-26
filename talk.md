@@ -298,163 +298,97 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-## Get Cookie (Wai)
+## Get Header (Scotty)
 
 ```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
+getHeader :: Monad m => Text -> ActionT m (Maybe Text)
 ```
 
 ---
 
-## Get Cookie (Scotty)
+## Get Header (Scotty)
 
 ```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> ActionT m (Maybe Text)
-getCookie name = do
-  c <- header "Cookie"
-  return . lookup name $ parseCookies c
-```
-
----
-
-## Get Cookie (Scotty)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> ActionT m (Maybe Text)
-getCookie name = do
-  c <- header "Cookie"
-  return . lookup name $ parseCookies c
-```
-
-```haskell
-getCookie "foo"
-```
-
-
----
-
-## Get Cookie (Scotty unrolled)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> ReaderT Request (StateT Response m) (Maybe Text)
-getCookie name = do
-  c <- header "Cookie"
-  return . lookup name $ parseCookies c
-```
-
----
-
-## Get Cookie (Scotty unrolled)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> Request -> StateT Response m (Maybe Text)
-getCookie name req = do
-  c <- return . lookup "Cookie" . requestHeaders $ req
-  return . lookup name $ parseCookies c
-```
-
----
-
-## Get Cookie (Scotty unrolled)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> Request -> Response -> m (Response, Maybe Text)
-getCookie name req resp = do
-  c <- return . lookup "Cookie" . requestHeaders $ req
-  return (resp, lookup name $ parseCookies c)
-```
-
----
-
-## Get Cookie (Scotty unrolled)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Monad m => Text -> Request -> m (Maybe Text)
-getCookie name req = do
-  c <- return . lookup "Cookie" . requestHeaders $ req
-  return (lookup name $ parseCookies c)
-```
-
----
-
-## Get Cookie (Scotty unrolled)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
-```
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
-  c <- lookup "Cookie" . requestHeaders $ req
-  lookup name $ parseCookies c
-```
-
----
-
-## Get Cookie (Wai + Scotty)
-
-```haskell
-getCookie :: Text -> Request -> Maybe Text
-getCookie name req = do
- c <- lookup "Cookie" . requestHeaders $ req
- lookup name $ parseCookies c
+getHeader :: Monad m => Text ->
+  ActionT m (Maybe Text)
+getHeader name = do
+  req <- request
+  return . lookup name . requestHeaders $ req
 ```
 
 ```haskell
 request :: Monad m => ActionT e m Request
 ```
 
+---
+
+## Get Header (Scotty unrolled)
+
 ```haskell
-getCookie "foo" <$> request
+getHeader :: Monad m => Text ->
+  ReaderT Request (StateT Response m) (Maybe Text)
+getHeader name = do
+  req <- request
+  return . lookup name . requestHeaders $ req
+```
+
+---
+
+## Get Header (Scotty unrolled)
+
+```haskell
+getHeader :: Monad m => Text ->
+  Request -> StateT Response m (Maybe Text)
+getHeader name req =
+  return . lookup name . requestHeaders $ req
+```
+
+---
+
+## Get Header (Scotty unrolled)
+
+```haskell
+getHeader :: Monad m => Text ->
+  Request -> Response -> m (Response, Maybe Text)
+getHeader name req resp =
+  return (resp, lookup name . requestHeaders $ req)
+```
+
+---
+
+## Get Header (Scotty unrolled)
+
+```haskell
+getHeader :: Monad m => Text ->
+  Request -> m (Maybe Text)
+getHeader name req =
+  return . lookup name . requestHeaders $ req
+```
+
+---
+
+## Get Header (Scotty unrolled)
+
+```haskell
+getHeader :: Text ->
+  Request -> Maybe Text
+getHeader name req =
+  lookup name . requestHeaders $ req
+```
+
+---
+
+## Get Header (Wai + Scotty)
+
+```haskell
+getHeader :: Text ->
+  Request -> Maybe Text
+getHeader name req =
+ lookup name . requestHeaders $ req
+```
+
+```haskell
+getHeader "foo" <$> request
 ```
 
 ---
@@ -486,29 +420,28 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-## Set Cookie (Wai)
+## Set Cookie (Scotty)
 
 ```haskell
-setCookie :: SetCookie -> Response -> Response
-setCookie c =
-  addHeader ("Set-Cookie", renderSetCookie c)
-```
-
-```haskell
-addHeader :: Header -> Response -> Response
+addHeader :: Monad m => Header ->
+  ActionT e m ()
 ```
 
 ---
 
-## Add Headers (Wai)
+## Add Header (Scotty)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader header response =
-  resp {
-      responseHeaders =
-        header : responseHeaders response
-    }
+addHeader :: Monad m =>
+  ActionT m ()
+addHeader h =
+  modify (\resp ->
+    resp { responseHeaders = h : responseHeaders resp }
+  )
+```
+
+```haskell
+modify :: (Response -> Response) -> ActionT m ()
 ```
 
 ```haskell
@@ -516,40 +449,18 @@ responseHeaders :: Response -> [Header]
 ```
 
 
----
-
-## Set Cookie (Scotty)
-
-```haskell
-setCookie :: Monad m => SetCookie -> ActionT e m ()
-setCookie c =
-  addHeader ("Set-Cookie", renderSetCookie c)
-```
-
-```haskell
-addHeader :: Monad m => Header -> ActionT e m ()
-```
-
-???
-
-TODO
-
-- How would you test?
 
 ---
 
-## Add Header (Scotty)
+## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Monad m => ActionT m ()
-addHeader header =
-  modify (\response -> addHeaderWai header response)
+addHeader :: Monad m => Header ->
+  ReaderT Request (StateT Response m) ()
+addHeader h =
+  modify (\resp ->
+    resp { responseHeaders = h : responseHeaders resp }
+  )
 ```
 
 ---
@@ -557,15 +468,12 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Monad m => Header -> ReaderT Request (StateT Response m) ()
-addHeader header =
-  modify (\response -> addHeaderWai header response)
+addHeader :: Monad m => Header ->
+  Request -> StateT Response m ()
+addHeader h req =
+  modify (\resp
+    resp { responseHeaders = h : responseHeaders resp }
+  )
 ```
 
 ---
@@ -573,31 +481,12 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Monad m => Header -> Request -> StateT Response m ()
-addHeader header req =
-  modify (\response -> addHeaderWai header response)
-```
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Monad m => Header -> Request -> StateT Response m ()
-addHeader header req =
-  modify (\response -> addHeaderWai header response)
+addHeader :: Monad m => Header ->
+  Request -> StateT Response m ()
+addHeader h req =
+  modify (\resp ->
+    resp { responseHeaders = h : responseHeaders resp }
+  )
 ```
 
 ```sh
@@ -613,15 +502,12 @@ Failing due to -Werror.
 ## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Monad m => Header -> StateT Response m ()
-addHeader header =
-  modify (\response -> addHeaderWai header response)
+addHeader :: Monad m => Header ->
+  StateT Response m ()
+addHeader h =
+  modify (\resp ->
+    resp { responseHeaders = h : responseHeaders resp }
+  )
 ```
 
 ---
@@ -629,15 +515,10 @@ addHeader header =
 ## Add Header (Scotty unrolled)
 
 ```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
-```
-
-```haskell
-addHeader :: Header -> Response -> Response
-addHeader h r =
-  response { responseHeaders = r : responseHeaders r }
+addHeader :: Header ->
+  Response -> Response
+addHeader h resp =
+  resp { responseHeaders = h : responseHeaders resp }
 ```
 
 ---
@@ -645,15 +526,14 @@ addHeader h r =
 ## Add Header (Wai + Scotty)
 
 ```haskell
-addHeader :: Header -> Response -> Response
+addHeader :: Header ->
+  Response -> Response
+addHeader h resp =
+  resp { responseHeaders = h : responseHeaders resp }
 ```
 
 ```haskell
-modifyResponse :: (Response -> Response) -> ActionT m ()
-```
-
-```haskell
-modifyResponse (addHeader cookieHeader)
+modifyResponse (addHeader ("Set-Cookie", "abc"))
 ```
 
 
