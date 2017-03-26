@@ -1,0 +1,29 @@
+name:                  charlotte-scotty
+version:               0.0.1
+license:               AllRightsReserved
+author:                Charles O'Farrell <charleso@charleso.org>
+maintainer:            Charles O'Farrell <charleso@charleso.org>
+copyright:             (c) 2017 Charles O'Farrell.
+synopsis:              charlotte-scotty
+category:              System
+cabal-version:         >= 1.8
+build-type:            Simple
+description:           charlotte-scotty
+
+executable charlotte-scotty
+  ghc-options:
+                    -Wall -threaded -O2
+                    -rtsopts -with-rtsopts "-T -N"
+
+  hs-source-dirs:   main
+
+  main-is:
+                    charlotte-scotty.hs
+
+  build-depends:
+                      base
+                    , charlotte-wai
+                    , http-types                      == 0.9.*
+                    , scotty                          == 0.11.*
+                    , scotty-cookie                   == 0.1.*
+                    , text                            == 1.2.*
