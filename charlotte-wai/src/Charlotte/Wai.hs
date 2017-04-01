@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Charlotte.Wai (
-    html
+    Application'
+  , html
   , redirect
   , addHeader
   , getCookie
@@ -21,6 +22,8 @@ import           Network.HTTP.Types (Header, Status)
 import qualified Network.HTTP.Types as HTTP
 
 import qualified Web.Cookie as Cookie
+
+type Application' = Request -> IO Response
 
 ------
 
