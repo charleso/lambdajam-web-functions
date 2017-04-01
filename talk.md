@@ -11,52 +11,118 @@ background-image: url(images/ambiata-chopsticks.png)
 
 ---
 
-## What do we expect from a web framework?
+## Haskell Web Frameworks
 
-- Routing
-  - Path
-  - Method
-- Request Parsing
-- Response Building
-- Error handling?
-- Content Type Negotiation?
-
----
-
-## Basic Example
-
-- `/`
-  If logged in then redirect to profile,
-  otherwise redirect to login
-- `/login`
-  Require username for login
-- `/profile/{user}`
-  Show username if matches current user,
-  otherwise an unauthorised page
+- Happstack
+- Scotty
+- Snap
+- Yesod
+- Airship
+- Spock
+- Servant
 
 ---
 
-## Wai
+class: center, middle, section-aqua, heading-white
+
+# Scotty
+
+---
+
+## Scotty
 
 ```haskell
-type Application =
-  Request ->
-  (Response -> IO ResponseReceived) ->
-  IO ResponseReceived
+main :: IO ()
+main =
+  scotty 8080 routes
+
+routes :: ScottyM ()
+routes = do
+  get "/" $
+    --
+  get "/login" $
+    --
+  post "/login" $
+    --
+  get "/profile/:user" $
+    --
 ```
 
 ---
 
-## Wai Simplified
+## Scotty
 
 ```haskell
-type Application =
-  Request -> IO Response
+get "/" $
+  secure $ session ->
+    redirect ("/profile/" <> session)
+
+get "/login" $
+  html $ loginView Nothing
+
+post "/login" $ do
+  user <- param "username"
+  setCookie (makeSimpleCookie "session" user)
+  redirect ("/profile/" <> user)
+
+get "/profile/:user" $
+  secure $ session -> do
+    user <- param "user"
+    if session /= user then do
+      status status403
+      html (page "Unauthorized")
+    else
+      html (page "Authorized")
 ```
+
+???
+
+- Split into multiple page
 
 ---
 
-## [Servlet](https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServlet.html)
+## Scotty
+
+```haskell
+secure :: (Session -> ActionM ()) -> ActionM ()
+secure f = do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just s ->
+      f (Session s)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# What is a web framework?
+
+???
+
+- "Let's take a step back"
+- TODO Image?
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Request -> Response
+
+---
 
 ```java
 interface HttpServlet {
@@ -68,219 +134,386 @@ interface HttpServlet {
 }
 ```
 
-
-
-
-
-
-
-
-
 ---
 
-## Scotty
+class: center, middle, section-yellow, heading-black
 
-> A Haskell web framework inspired by Ruby's Sinatra, using WAI and Warp.
-
-https://hackage.haskell.org/package/scotty
+# Request -> IO Response
 
 ???
 
-This is _not_ about critising Scotty, it's just one example
+- "But this is haskell and we need to be able to do side effects"
 
 ---
 
-## Routing: Scotty
+class: center, middle, section-aqua, heading-white
 
-```haskell
-routes :: ScottyM ()
-routes = do
-  get "/" $
-    homeGet
-  get "/login" $
-    loginGet
-  post "/login" $
-    loginPost
-  get "/profile/:user" $
-    profileGet
-```
+# Web Application Interface
 
 ---
 
-## Routing: Scotty (Bug)
+class: center, middle, section-aqua, heading-white
 
-```haskell
-routes :: ScottyM ()
-routes = do
-  get "/" $
-    homeGet
-  get "/login" $
-    loginGet
-  post "/login" $
-    loginPost
-  get "/profile/:user" $
-    profileGet
-```
+# WAI
 
-```
-500 Internal Server Error
-
-Param: username not found!
-```
-
-???
-
-TODO highlight error
 
 ---
 
-## Routing: Scotty (Bug)
+
+TODO Request Response
+
+
+
+---
+
+## Home
 
 ```haskell
-routes :: ScottyM ()
-routes = do
-  get "/" $
-    homeGet
-  get "/login" $
-    loginGet
-  post "/login" $
-    loginPost
-  get "/profile/:user" $
-    profileGet
-
-profileGet :: ActionT m ()
-profileGet =
-  name <- param "username"
+get "/" $
   ...
+    redirect ("/profile/" <> session)
+```
+
+```haskell
+redirect :: Text -> ActionM ()
 ```
 
 ---
 
-## Routing: Scotty (Fix)
+## WAI: Create Response
+
+``` haskell
+responseLBS ::
+  Status ->
+  [Header] ->
+  ByteString ->
+  Response
+```
+
+---
+
+```haskell
+myRedirect :: Text -> Response
+myRedirect location =
+  responseLBS status302 [("Location", location)] ""
+```
+
+???
+
+- Ignore the body for now - will discuss later
+
+---
+
+```haskell
+get "/" $
+  ...
+    setResponse (myRedirect ("/profile/" <> session))
+```
+
+
+
+
+
+
+---
+
+```haskell
+post "/login" $ do
+  user <- param "username"
+  setCookie (makeSimpleCookie "session" user)
+  redirect ("/profile/" <> user)
+```
+
+---
+
+```haskell
+setCookie :: Cookie -> ActionM ()
+```
+
+---
+
+```haskell
+mapResponseHeaders ::
+  ([Header] -> [Header]) ->
+  Response ->
+  Response
+```
+
+```haskell
+setMyCookie :: Cookie -> Response -> Response
+setMyCookie c =
+  mapResponseHeaders
+    (\hs -> ("Set-Cookie", renderSetCookie c) : hs)
+```
+
+---
+
+```haskell
+post "/login" $ do
+  user <- param "username"
+  setResponse $
+    setMyCookie (makeSimpleCookie "session" user $
+      redirect ("/profile/" <> user)
+```
+
+???
+
+TODO Param
+
+
+
+
+
+
+
+
+
+
+---
+
+```haskell
+get "/profile/:user" $
+  ...
+    user <- param "user"
+    if session /= user then
+      setResponse (responseLBS status403 [] "")
+    else
+      setResponse (responseLBS status200 [] "")
+```
+
+---
+
+```haskell
+secure :: (Session -> ActionM ()) -> ActionM ()
+secure f = do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just s ->
+      f (Session s)
+```
+
+---
+
+```haskell
+getCookie :: Text -> ActionM (Maybe Text)
+```
+
+---
+
+```haskell
+getMyCookie :: Request -> Text -> Maybe Text
+getMyCookie request name = do
+ cm <- lookup "Cookie" (requestHeaders request)
+ lookup name (parseCookies cm)
+```
+
+---
+
+```haskell
+secure ::
+  Request ->
+  (Session -> IO Response) ->
+  IO Response
+secure request f =
+  case getMyCookie request "session" of
+    Nothing ->
+      return (redirect "/login")
+    Just s ->
+      f (Session s)
+```
+
+
+
+
+
+
+
+
+
+
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# Routing
+
+---
 
 ```haskell
 routes :: ScottyM ()
 routes = do
   get "/" $
-    homeGet
+    ...
   get "/login" $
-    loginGet
+    ...
   post "/login" $
-    loginPost
-  get "/profile/:user" $ do
-    name <- param "user"
-    profileGet name
-```
-
-???
-
-- What tradeoffs are we making?
-- Nice syntax doesn't make it safe
-
----
-
-## Routing
-
-```haskell
-routes :: Application
-routes req =
-  case pathInfo req of
-    [] ->
-      home req
-    ["login"] ->
-      login request
-    ["profile", user] ->
-      profile user req
-    _ ->
-      error "Not found"
+    ...
+  get "/profile/:user" $
+    ...
 ```
 
 ---
-
-## Routing
-
-```haskell
-routes :: Request -> IO Response
-routes req =
-  case pathInfo req of
-    [] ->
-      home req
-    ["login"] ->
-      login request
-    ["profile", user] ->
-      profile user req
-    _ ->
-      error "Not found"
-```
 
 ```haskell
 pathInfo :: Request -> [Text]
 ```
 
+```haskell
+requestMethod :: Request -> Method
+```
+
 ---
 
-## Routing
-
 ```haskell
-routes :: (Request -> IO Response) ->
-  Request -> IO Response
-routes notFound req =
-  case pathInfo req of
+myRoutes :: Request -> IO Response
+myRoutes request =
+  case pathOf request of
     [] ->
-      home req
+      ...
     ["login"] ->
-      login request
+      ...
     ["profile", user] ->
-      profile user req
+      ...
     _ ->
-      notFound req
+      ???
 ```
 
 ---
 
-## More Routing Features
+```haskell
+myRoutes :: Request -> IO Response
+myRoutes request =
+  case pathOf request of
+    [] ->
+      ...
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+    _ ->
+      responseLBS status404 [] "Not found"
+```
 
-- Type-safe
-- Bi-directional
+---
+
+```haskell
+myRoutes :: Request -> IO Response
+myRoutes request =
+  case pathOf request of
+    [] ->
+      ...
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+    _ ->
+      responseLBS status404 [] "Not found"
+```
 
 ???
 
-This is not a tutorial about routing.
-Prefer to show other examples of web frameworks.
-
-
-
-
-
-
-
-
-
+- Less than ideal, what does the 404 look like?
 
 ---
 
-## Scotty
+```haskell
+myRoutes :: (Request -> IO Response) -> Request -> IO Response
+myRoutes notFound request =
+  case pathOf request of
+    [] ->
+      ...
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+    _ ->
+      notFound request
+```
+
+---
 
 ```haskell
-type ActionT m a =
-  ReaderT Request (StateT Response m) a
+myRoutes :: Request -> IO (Maybe Response)
+myRoutes request =
+  case pathOf request of
+    [] ->
+      Just <$> ...
+    ["login"] ->
+      Just <$> ...
+    ["profile", user] ->
+      Just <$> ...
+    _ ->
+      return Nothing
+```
+
+---
+
+```haskell
+myRoutes :: Request -> IO Response
+myRoutes request =
+  case pathOf request of
+    ...
+    ["login"] ->
+      case requestMethod request of
+        "GET" ->
+           ...
+        "POST" ->
+           ...
+        _ ->
+          responseLBS status405 [] ""
+```
+
+---
+
+```haskell
+routes :: ScottyM ()
+routes = do
+  ...
+  get "/profile/:user" $
+    user <- getParam "username"
 ```
 
 ???
 
-TODO When/Should you should this in the presentation?
+- Needs type safety
 
 ---
 
-## Scotty
+class: center, middle, section-yellow, heading-black
 
-```haskell
-type ActionT m a =
-  ReaderT Request (StateT Response m) a
-```
+# Bidirectional
 
-- `ReaderT`: Global arguments
-- `StateT`: Global state
+???
+
+- TODO This slide feels out of place
+
+---
+
+## Haskell Routing
+
+- web-routes
+- snap-web-routes
+- web-routes-boomerang
+- reroute
+
+???
+
+- I'm not suggesting pattern matching is way to do routing
+- Cottage Industry
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -295,109 +528,131 @@ type ActionT m a =
 
 class: center, middle, section-aqua, heading-white
 
-# Request handling
+# How do I run it?
 
 ---
 
-## Get Header (Scotty)
-
 ```haskell
-getHeader :: Monad m => Text ->
-  ActionT m (Maybe Text)
-```
-
----
-
-## Get Header (Scotty)
-
-```haskell
-getHeader :: Monad m => Text ->
-  ActionT m (Maybe Text)
-getHeader name = do
-  req <- request
-  return . lookup name . requestHeaders $ req
+main :: IO ()
+main =
+  scotty 8080 $ do
+    r <- request
+    setResponse (myRoutes r)
 ```
 
 ```haskell
-request :: Monad m => ActionT m Request
-```
-
----
-
-## Get Header (Scotty unrolled)
-
-```haskell
-getHeader :: Monad m => Text ->
-  ReaderT Request (StateT Response m) (Maybe Text)
-getHeader name = do
-  req <- request
-  return . lookup name . requestHeaders $ req
-```
-
----
-
-## Get Header (Scotty unrolled)
-
-```haskell
-getHeader :: Monad m => Text ->
-  Request -> StateT Response m (Maybe Text)
-getHeader name req =
-  return . lookup name . requestHeaders $ req
-```
-
----
-
-## Get Header (Scotty unrolled)
-
-```haskell
-getHeader :: Monad m => Text ->
-  Request -> Response -> m (Response, Maybe Text)
-getHeader name req resp =
-  return (resp, lookup name . requestHeaders $ req)
-```
-
----
-
-## Get Header (Scotty unrolled)
-
-```haskell
-getHeader :: Monad m => Text ->
-  Request -> m (Maybe Text)
-getHeader name req =
-  return . lookup name . requestHeaders $ req
-```
-
----
-
-## Get Header (Scotty unrolled)
-
-```haskell
-getHeader :: Text ->
-  Request -> Maybe Text
-getHeader name req =
-  lookup name . requestHeaders $ req
-```
-
----
-
-## Get Header (Wai + Scotty)
-
-```haskell
-getHeader :: Text ->
-  Request -> Maybe Text
-getHeader name req =
- lookup name . requestHeaders $ req
-```
-
-```haskell
-getHeader "foo" <$> request
+request :: ActionM Request
 ```
 
 ---
 
 class: center, middle, section-yellow, heading-black
 
-# Be precise
+# scottyApp :: ScottyM () -> IO Application
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# type Application = Request -> IO Response
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# Warp
+
+???
+
+- One of the most common web servers
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# run :: Port -> Application -> IO ()
+
+---
+
+```haskell
+main :: IO ()
+main = do
+  app <- scottyApp $ do
+    r <- request
+    setResponse (myRoutes r)
+  run 8080 app
+```
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# WAI Not
+
+---
+
+```haskell
+main :: IO ()
+main =
+  run 8080 myRoutes
+```
+
+
+
+
+
+
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# White Lie
+
+---
+
+```haskell
+type Application =
+  Request -> IO Response
+```
+
+---
+
+```haskell
+type Application =
+  Request ->
+  (Response -> IO ResponseReceived) ->
+  IO ResponseReceived
+```
+
+???
+
+- See resources at the end
+
+---
+
+```haskell
+main :: IO ()
+main =
+  run 8080 myApp
+```
+
+```haskell
+myApp ::
+  Request ->
+  (Response -> IO ResponseReceived) ->
+  IO ResponseReceived
+myApp request respond = do
+  response <- myRoutes request
+  respond response
+```
+
+```haskell
+myRoutes :: Request -> IO Response
+```
+
+
+
 
 
 
@@ -417,168 +672,38 @@ class: center, middle, section-yellow, heading-black
 ---
 
 class: center, middle, section-aqua, heading-white
+
+# What did the web framework give us?
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Request Handling
+
+---
+
+class: center, middle, section-yellow, heading-black
 
 # Response Building
 
 ---
 
-## Set Cookie (Scotty)
+class: center, middle, section-yellow, heading-black
 
-```haskell
-addHeader :: Monad m => Header ->
-  ActionT m ()
-```
-
----
-
-## Add Header (Scotty)
-
-```haskell
-addHeader :: Monad m =>
-  ActionT m ()
-addHeader h =
-  modify (\resp ->
-    resp { responseHeaders = h : responseHeaders resp }
-  )
-```
-
-```haskell
-modify :: (Response -> Response) -> ActionT m ()
-```
-
-```haskell
-responseHeaders :: Response -> [Header]
-```
-
-
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Monad m => Header ->
-  ReaderT Request (StateT Response m) ()
-addHeader h =
-  modify (\resp ->
-    resp { responseHeaders = h : responseHeaders resp }
-  )
-```
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Monad m => Header ->
-  Request -> StateT Response m ()
-addHeader h req =
-  modify (\resp ->
-    resp { responseHeaders = h : responseHeaders resp }
-  )
-```
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Monad m => Header ->
-  Request -> StateT Response m ()
-addHeader h req =
-  modify (\resp ->
-    resp { responseHeaders = h : responseHeaders resp }
-  )
-```
-
-```sh
-main/application.hs:59:14:
-  Warning: Defined but not used: ‘req’
-
-<no location info>:
-Failing due to -Werror.
-```
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Monad m => Header ->
-  StateT Response m ()
-addHeader h =
-  modify (\resp ->
-    resp { responseHeaders = h : responseHeaders resp }
-  )
-```
-
----
-
-## Add Header (Scotty unrolled)
-
-```haskell
-addHeader :: Header ->
-  Response -> Response
-addHeader h resp =
-  resp { responseHeaders = h : responseHeaders resp }
-```
-
----
-
-## Add Header (Wai + Scotty)
-
-```haskell
-addHeader :: Header ->
-  Response -> Response
-addHeader h resp =
-  resp { responseHeaders = h : responseHeaders resp }
-```
-
-```haskell
-modifyResponse (addHeader ("Set-Cookie", "abc"))
-```
-
+# Do we need web frameworks?
 
 ---
 
 class: center, middle, section-yellow, heading-black
 
-# Be precise!
-
-???
-
-- Compiler errors are you friend
-
-
-
-
-
-
-
-
-
-
-
-
----
-
-class: center, middle, section-aqua, heading-white
-background-image: url(http://vignette1.wikia.nocookie.net/lego/images/d/d0/Scribble-Face_Bad_Cop.jpg)
-
-# Good Functions
-
----
-
-## Good Functions
-
-- Be precise
-- Compiler warnings should be errors
-- Composition
+# Just Functions + Data
 
 ---
 
 ## Resources
 
+- http://blog.infinitenegativeutility.com/2016/8/resources--laziness--and-continuation-passing-style
 - https://github.com/charleso/lambdajam-web-functions
 - "Build yourself a Haskell web framework"
   - https://www.youtube.com/watch?v=etuSnom2v2M
