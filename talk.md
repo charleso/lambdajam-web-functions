@@ -5,7 +5,13 @@ background-image: url(images/ambiata-chopsticks.png)
 
 ---
 
+class: middle
+
 <img src="images/recommended_haskell.png" width="700" />
+
+---
+
+class: middle
 
 <img src="images/recommended_haskell_2.png" width="700" />
 
@@ -71,8 +77,11 @@ class: code
 
 ```haskell
 get "/login" $
-  html $ loginView Nothing
-
+  html . concat $ [
+    , "<form method=\"POST\" action=\"/login\">"
+    , "  <input name=\"username\" />"
+    , "</form>"
+    ]
 ```
 
 ---
@@ -262,6 +271,34 @@ get "/" $
 
 
 
+
+---
+
+class: code
+
+```haskell
+get "/login" $
+  html $
+    concat [
+      , "<form method=\"POST\" action=\"/login\">"
+      , "  <input name=\"username\" />"
+      , "</form>"
+      ]
+```
+
+---
+
+class: code
+
+```haskell
+get "/login" $
+  setResponse . responseLBS status200 [] $
+    concat [
+      , "<form method=\"POST\" action=\"/login\">"
+      , "  <input name=\"username\" />"
+      , "</form>"
+      ]
+```
 
 ---
 
@@ -525,7 +562,9 @@ myRoutes request =
 class: middle, center, code
 
 ```haskell
-requestMethod :: Request -> IO Method
+requestMethod :: Request -> Method
+
+type Method = ByteString
 ```
 
 ---
@@ -680,6 +719,21 @@ class: center, middle, section-yellow, heading-black
 ---
 
 class: code
+
+```haskell
+run :: Port -> (Request -> IO Response) -> IO ()
+
+myRoutes :: Request -> IO Response
+```
+---
+
+class: code
+
+```haskell
+run :: Port -> (Request -> IO Response) -> IO ()
+
+myRoutes :: Request -> IO Response
+```
 
 ```haskell
 main :: IO ()
