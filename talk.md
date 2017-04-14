@@ -65,11 +65,10 @@ class: code
 
 ```haskell
 get "/login" $
-  html . concat $ [
-    , "<form method=\"POST\" action=\"/login\">"
-    , "  <input name=\"username\" />"
-    , "</form>"
-    ]
+  html $
+    "<form method="POST" action="/login">" <>
+    "  <input name="username" />" <>
+    "</form>"
 ```
 
 ---
@@ -183,20 +182,6 @@ type Application = Request -> IO Response
 
 ---
 
-class: center, middle, section-yellow, heading-black
-
-# Data + Functions
-
----
-
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
-
-???
-
-- We're functional programmers - we know this
-
----
-
 class: center, middle, section-aqua, heading-white
 
 # Web Application Interface
@@ -228,6 +213,20 @@ data Response =
     }
 ```
 
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Data + Functions
+
+---
+
+background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+
+???
+
+- We're functional programmers - we know this
+
 
 
 
@@ -251,6 +250,7 @@ class: code
 
 ```haskell
 get "/login" $
+
   html $
     "<form method="POST" action="/login">" <>
     "  <input name="username" />" <>
@@ -259,9 +259,16 @@ get "/login" $
 
 ---
 
-class: middle, code
+class: code
 
 ``` haskell
+get "/login" $
+
+  html $
+    "<form method="POST" action="/login">" <>
+    "  <input name="username" />" <>
+    "</form>"
+
 responseLBS ::
   Status -> [Header] -> ByteString -> Response
 ```
@@ -277,6 +284,9 @@ loginGet =
     "<form method="POST" action="/login">" <>
     "  <input name="username" />" <>
     "</form>"
+
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
 ```
 
 ---
