@@ -17,6 +17,12 @@ class: middle
 
 ---
 
+class: center, middle, section-aqua, heading-white
+
+# Why?
+
+---
+
 ## Haskell Web Frameworks
 
 - Happstack
@@ -31,44 +37,26 @@ class: middle
 
 class: center, middle, section-aqua, heading-white
 
-# Scotty
+# &lt;insert contrived example&gt;
 
 ---
 
-class: middle, center, code
+class: center, middle, section-aqua, heading-white
 
-```haskell
-ActionM = Request + Response
-```
+# Scotty
 
 ---
 
 class: code
 
 ```haskell
-main :: IO ()
-main =
-  scotty 8080 routes
-
 routes = do
-  get "/" $
-    ...
   get "/login" $
     ...
   post "/login" $
     ...
   get "/profile/:user" $
     ...
-```
-
----
-
-class: code
-
-```haskell
-get "/" $
-  secure $ \session ->
-    redirect ("/profile/" <> session)
 ```
 
 ---
@@ -104,34 +92,23 @@ post "/login" $ do
 class: code
 
 ```haskell
-get "/profile/:user" $
-  secure $ \session -> do
-    user <- param "user"
-    if session /= user then do
-      status status403
-      html "<body>Unauthorized"
-    else
-      html "<body>Authorized"
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Unauthorized"
+      else
+        html "<body>Authorized"
 ```
 
 ???
 
 - Split into multiple page
-
----
-
-class: code
-
-```haskell
-secure :: (Session -> ActionM ()) -> ActionM ()
-secure f = do
-  c <- getCookie "session"
-  case c of
-    Nothing ->
-      redirect "/login"
-    Just s ->
-      f (Session s)
-```
 
 
 
@@ -177,6 +154,14 @@ Request -> IO Response
 
 ---
 
+background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+
+???
+
+- We're functional programmers - we know this
+
+---
+
 class: center, middle, section-aqua, heading-white
 
 # Web Application Interface
@@ -208,69 +193,17 @@ data Response =
     }
 ```
 
----
 
-class: code
-
-```haskell
-get "/" $
-  secure $ \session ->
-    redirect ("/profile/" <> session)
-```
-
-```haskell
-redirect :: Text -> ActionM ()
-```
-
----
-
-class: middle, code
-
-``` haskell
-responseLBS ::
-  Status -> [Header] -> ByteString -> Response
-```
-
----
-
-class: code
-
-```haskell
-myRedirect :: Text -> Response
-myRedirect location =
-  responseLBS
-    status302
-    [("Location", location)]
-    ""
-```
-
-???
-
-- Ignore the body for now - will discuss later
-
----
-
-class: middle, center, code
-
-``` haskell
-setResponse :: Response -> ActionM ()
-```
-
----
-
-class: code
-
-```haskell
-get "/" $
-  secure $ \session ->
-    setResponse
-      (myRedirect ("/profile/" <> session))
-```
 
 
 
 
 
+---
+
+class: center, middle, section-aqua, heading-white
+
+# What can I do with it?
 
 ---
 
@@ -288,11 +221,21 @@ get "/login" $
 
 ---
 
+class: middle, code
+
+``` haskell
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
+```
+
+---
+
 class: code
 
 ```haskell
-get "/login" $
-  setResponse . responseLBS status200 [] $
+loginGet :: Response
+loginGet =
+  responseLBS status200 [] $
     concat [
       , "<form method=\"POST\" action=\"/login\">"
       , "  <input name=\"username\" />"
@@ -313,11 +256,74 @@ post "/login" $ do
 
 ---
 
-class: middle, center, code
+class: code
 
 ```haskell
-setCookie :: Cookie -> ActionM ()
+
+
+
+
+
+
+
+
+requestBody :: Request -> IO ByteString
+
+parseQueryText ::
+  ByteString -> [(Text, Maybe Text)]
 ```
+
+---
+
+class: code
+
+```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- requestBody request
+  case lookup "username" (parseQueryText b) of
+    ...
+
+
+requestBody :: Request -> IO ByteString
+
+parseQueryText ::
+  ByteString -> [(Text, Maybe Text)]
+```
+
+---
+
+class: code
+
+```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- requestBody request
+  case lookup "username" (parseQueryText b) of
+    Nothing ->
+      return $
+        responseLBS status400 []
+          "<body>Bad request"
+    ...
+```
+
+---
+
+class: code
+
+```haskell
+myRedirect :: Text -> Response
+myRedirect location =
+  responseLBS
+    status302
+    [("Location", location)]
+    ""
+```
+
+???
+
+- Ignore the body for now - will discuss later
+
 
 ---
 
@@ -342,40 +348,16 @@ setMyCookie c =
 class: code
 
 ```haskell
-post "/login" $ do
-  user <- param "username"
-  setResponse $
-    setMyCookie (makeCookie "session" user) $
-      myRedirect ("/profile/" <> user)
-```
-
----
-
-class: code
-
-```haskell
-request :: ActionM Request
-
-requestBody :: Request -> IO ByteString
-
-parseQueryText :: ByteString -> [(Text, Maybe Text)]
-```
-
----
-
-class: code
-
-```haskell
-post "/login" $ do
-  request <- request
+loginPost :: Request -> IO Response
+loginPost request = do
   b <- requestBody request
   case lookup "username" (parseQueryText b) of
     Nothing ->
-      setResponse $
+      return $
         responseLBS status400 []
           "<body>Bad request"
     Just user ->
-      setResponse $
+      return $
         setMyCookie (makeCookie "session" user) $
           myRedirect ("/profile/" <> user)
 ```
@@ -394,54 +376,18 @@ post "/login" $ do
 class: code
 
 ```haskell
-get "/profile/:user" $
-  secure $ \session ->
-    user <- param "user"
-    if session /= user then do
-      status status403
-      html "<body>Not allowed"
-    else
-      html "<body>Hello"
-```
-
----
-
-class: code
-
-```haskell
-get "/profile/:user" $
-  secure $ \session ->
-    user <- param "user"
-    setResponse $
-      if session /= user then
-        responseLBS status403 []
-          "<body>Not allowed"
-      else
-        responseLBS status200 []
-          "<body>Hello"
-```
-
----
-
-class: code
-
-```haskell
-secure :: (Session -> ActionM ()) -> ActionM ()
-secure f = do
+get "/profile/:user" $ do
   c <- getCookie "session"
   case c of
     Nothing ->
       redirect "/login"
-    Just s ->
-      f (Session s)
-```
-
----
-
-class: middle, center, code
-
-```haskell
-getCookie :: Text -> ActionM (Maybe Text)
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
 ```
 
 ---
@@ -460,16 +406,18 @@ getMyCookie request name = do
 class: code
 
 ```haskell
-secure ::
-  Request ->
-  (Session -> IO Response) ->
-  IO Response
-secure request f =
+userGet :: User -> Request -> Response
+userGet user request -> do
   case getMyCookie request "session" of
     Nothing ->
-      return (redirect "/login")
-    Just s ->
-      f (Session s)
+      myRedirect "/login"
+    Just session ->
+      if session /= user then
+        responseLBS status403 []
+          "<body>Not allowed"
+      else
+        responseLBS status200 []
+          "<body>Hello"
 ```
 
 
@@ -494,8 +442,6 @@ class: code
 
 ```haskell
 routes = do
-  get "/" $
-    ...
   get "/login" $
     ...
   post "/login" $
@@ -520,14 +466,18 @@ class: code
 myRoutes :: Request -> IO Response
 myRoutes request =
   case pathOf request of
-    [] ->
-      ...
     ["login"] ->
       ...
     ["profile", user] ->
       ...
-    _ ->
-      ???
+```
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+```
+Warning: Pattern match(es) are non-exhaustive
 ```
 
 ???
@@ -542,8 +492,6 @@ class: code
 myRoutes :: Request -> IO Response
 myRoutes request =
   case pathOf request of
-    [] ->
-      ...
     ["login"] ->
       ...
     ["profile", user] ->
@@ -575,7 +523,30 @@ class: code
 myRoutes :: Request -> IO Response
 myRoutes request =
   case pathOf request of
-    ...
+    ["login"] ->
+      case requestMethod request of
+        "GET" ->
+           ...
+        "POST" ->
+           ...
+```
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+```
+Warning: Pattern match(es) are non-exhaustive
+```
+
+---
+
+class: code
+
+```haskell
+myRoutes :: Request -> IO Response
+myRoutes request =
+  case pathOf request of
     ["login"] ->
       case requestMethod request of
         "GET" ->
@@ -648,34 +619,25 @@ class: center, middle, section-aqua, heading-white
 class: code
 
 ```haskell
-main :: IO ()
-main =
-  scotty 8080 $ do
-    r <- request
-    resp <- myRoutes r
-    setResponse resp
-```
-
-```haskell
-request :: ActionM Request
-
-myRoutes :: Request -> IO Response
+                   Request -> IO Response
 ```
 
 ---
 
-class: middle, center, code
-
-```haskell
-scottyApp :: ScottyM () -> IO Application
-```
-
----
-
-class: middle, center, code
+class: code
 
 ```haskell
 type Application = Request -> IO Response
+```
+
+---
+
+class: code
+
+```haskell
+type Application = Request -> IO Response
+
+run :: Port -> Application -> IO ()
 ```
 
 ---
@@ -690,9 +652,11 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-class: center, middle, code
+class: code
 
 ```haskell
+type Application = Request -> IO Response
+
 run :: Port -> Application -> IO ()
 ```
 
@@ -701,44 +665,18 @@ run :: Port -> Application -> IO ()
 class: code
 
 ```haskell
-main :: IO ()
-main = do
-  app <- scottyApp $ do
-    r <- request
-    resp <- myRoutes r
-    setResponse resp
-  run 8080 app
-```
+type Application = Request -> IO Response
 
----
+run :: Port -> Application -> IO ()
 
-class: center, middle, section-yellow, heading-black
-
-# WAI Not
-
----
-
-class: code
-
-```haskell
-run :: Port -> (Request -> IO Response) -> IO ()
-
-myRoutes :: Request -> IO Response
-```
----
-
-class: code
-
-```haskell
-run :: Port -> (Request -> IO Response) -> IO ()
-
-myRoutes :: Request -> IO Response
-```
-
-```haskell
 main :: IO ()
 main =
-  run 8080 myRoutes
+  run 8080 $ \request ->
+    case pathOf request of
+      ["login"] ->
+        ...
+      ["profile", user] ->
+        ...
 ```
 
 
@@ -755,10 +693,12 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-class: middle, center, code
+class: code
 
 ```haskell
-type Application = Request -> IO Response
+type Application =
+  Request ->
+  IO Response
 ```
 
 ---
@@ -790,13 +730,27 @@ type Application =
 ```haskell
 main :: IO ()
 main =
-  run 8080 $ \request respond -> do
-    response <- myRoutes request
-    respond response
+  run 8080 $ \request         -> do
+                myRoutes request
+```
+
+---
+
+class: code
+
+```haskell
+type Application =
+  Request ->
+  (Response -> IO ResponseReceived) ->
+  IO ResponseReceived
 ```
 
 ```haskell
-myRoutes :: Request -> IO Response
+main :: IO ()
+main =
+  run 8080 $ \request respond -> do
+    response <- myRoutes request
+    respond response
 ```
 
 
@@ -821,31 +775,13 @@ myRoutes :: Request -> IO Response
 
 class: center, middle, section-aqua, heading-white
 
-# What did the web framework give us?
+# What is a web application?
 
 ---
 
-class: center, middle, section-yellow, heading-black
+class: center, middle, section-aqua, heading-white
 
-# Request Handling
-
----
-
-class: center, middle, section-yellow, heading-black
-
-# Response Building
-
----
-
-class: center, middle, section-yellow, heading-black
-
-# Do we need web frameworks?
-
----
-
-class: center, middle, section-yellow, heading-black
-
-# Just Functions + Data
+# WAI = Data + Functions
 
 ---
 
