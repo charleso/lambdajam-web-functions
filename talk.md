@@ -134,23 +134,58 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-class: center, middle, code
+class: code
 
 ```haskell
-Request -> Response
+
+
+
+
+
+
+
+type Application = ???
 ```
 
 ---
 
-class: center, middle, code
+class: code
 
 ```haskell
-Request -> IO Response
+
+
+
+
+
+
+
+type Application = Request ->    Response
+```
+
+---
+
+class: code
+
+```haskell
+
+
+
+
+
+
+
+type Application = Request -> IO Response
 ```
 
 ???
 
 - "But this is haskell and we need to be able to do side effects"
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Data + Functions
 
 ---
 
@@ -199,6 +234,11 @@ data Response =
 
 
 
+
+
+
+
+
 ---
 
 class: center, middle, section-aqua, heading-white
@@ -212,11 +252,9 @@ class: code
 ```haskell
 get "/login" $
   html $
-    concat [
-      , "<form method=\"POST\" action=\"/login\">"
-      , "  <input name=\"username\" />"
-      , "</form>"
-      ]
+    "<form method="POST" action="/login">" <>
+    "  <input name="username" />" <>
+    "</form>"
 ```
 
 ---
@@ -236,11 +274,9 @@ class: code
 loginGet :: Response
 loginGet =
   responseLBS status200 [] $
-    concat [
-      , "<form method=\"POST\" action=\"/login\">"
-      , "  <input name=\"username\" />"
-      , "</form>"
-      ]
+    "<form method="POST" action="/login">" <>
+    "  <input name="username" />" <>
+    "</form>"
 ```
 
 ---
@@ -259,14 +295,6 @@ post "/login" $ do
 class: code
 
 ```haskell
-
-
-
-
-
-
-
-
 requestBody :: Request -> IO ByteString
 
 parseQueryText ::
@@ -278,17 +306,29 @@ parseQueryText ::
 class: code
 
 ```haskell
+requestBody :: Request -> IO ByteString
+
+parseQueryText ::
+  ByteString -> [(Text, Maybe Text)]
+
+
+parseBody :: Request -> IO [(Text, Maybe Text)]
+parseBody =
+  requestBody >>= parseQueryText
+```
+
+---
+
+class: code
+
+```haskell
 loginPost :: Request -> IO Response
 loginPost request = do
-  b <- requestBody request
-  case lookup "username" (parseQueryText b) of
+  b <- parseBody request
     ...
 
 
-requestBody :: Request -> IO ByteString
-
-parseQueryText ::
-  ByteString -> [(Text, Maybe Text)]
+parseBody :: Request -> IO [(Text, Maybe Text)]
 ```
 
 ---
@@ -298,49 +338,14 @@ class: code
 ```haskell
 loginPost :: Request -> IO Response
 loginPost request = do
-  b <- requestBody request
-  case lookup "username" (parseQueryText b) of
+  b <- parseBody request
+  case lookup "username" b of
     Nothing ->
-      return $
-        responseLBS status400 []
-          "<body>Bad request"
-    ...
-```
-
----
-
-class: code
-
-```haskell
-myRedirect :: Text -> Response
-myRedirect location =
-  responseLBS
-    status302
-    [("Location", location)]
-    ""
-```
-
-???
-
-- Ignore the body for now - will discuss later
+      ...
 
 
----
-
-class: code
-
-```haskell
-mapResponseHeaders ::
-  ([Header] -> [Header]) ->
-  Response ->
-  Response
-```
-
-```haskell
-setMyCookie :: Cookie -> Response -> Response
-setMyCookie c =
-  mapResponseHeaders $ \hs ->
-    ("Set-Cookie", renderSetCookie c) : hs
+    Just ->
+      ...
 ```
 
 ---
@@ -350,16 +355,61 @@ class: code
 ```haskell
 loginPost :: Request -> IO Response
 loginPost request = do
-  b <- requestBody request
-  case lookup "username" (parseQueryText b) of
+  b <- parseBody request
+  case lookup "username" b of
     Nothing ->
       return $
         responseLBS status400 []
           "<body>Bad request"
     Just user ->
-      return $
-        setMyCookie (makeCookie "session" user) $
-          myRedirect ("/profile/" <> user)
+      ...
+```
+
+---
+
+class: code
+
+```haskell
+    Just user ->
+```
+
+---
+
+class: code
+
+```haskell
+    Just user ->
+
+        myRedirect ("/profile/" <> user)
+
+myRedirect :: Text -> Response
+```
+
+---
+
+class: code
+
+```haskell
+    Just user ->
+      setMyCookie (makeCookie "session" user) $
+        ...
+
+
+
+setMyCookie :: Cookie -> Response -> Response
+```
+---
+
+class: code
+
+```haskell
+    Just user ->
+      setMyCookie (makeCookie "session" user) $
+        myRedirect ("/profile/" <> user)
+
+myRedirect :: Text -> Response
+
+setMyCookie :: Cookie -> Response -> Response
 ```
 
 
@@ -388,20 +438,6 @@ get "/profile/:user" $ do
         html "<body>Not allowed"
       else
         html "<body>Hello"
-```
-
----
-
-class: code
-
-```haskell
-userGet :: User -> Request -> Response
-userGet user request -> do
-  case getMyCookie request "session" of
-    Nothing ->
-      ....
-    Just session ->
-      ...
 ```
 
 ---
@@ -526,15 +562,9 @@ pathInfo :: Request -> [Text]
 
 ---
 
-class: center, middle, section-aqua, heading-white
+class: center, middle, section-yellow, heading-black
 
-```
-Warning: Pattern match(es) are non-exhaustive
-```
-
-???
-
-- "Interesting, now _we_ have to deal with the 404"
+#### Warning: Pattern match(es) are non-exhaustive
 
 ---
 
@@ -555,6 +585,7 @@ myRoutes request =
 
 ???
 
+- "Interesting, now _we_ have to deal with the 404"
 - Less than ideal, what does the 404 look like?
 
 ---
@@ -597,11 +628,9 @@ requestMethod :: Request -> Method
 
 ---
 
-class: center, middle, section-aqua, heading-white
+class: center, middle, section-yellow, heading-black
 
-```
-Warning: Pattern match(es) are non-exhaustive
-```
+#### Warning: Pattern match(es) are non-exhaustive
 
 ---
 
@@ -689,14 +718,6 @@ routes = do
 class: center, middle, section-aqua, heading-white
 
 # How do I run it?
-
----
-
-class: code
-
-```haskell
-                   Request -> IO Response
-```
 
 ---
 
