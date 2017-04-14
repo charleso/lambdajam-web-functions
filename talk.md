@@ -289,6 +289,7 @@ get "/login" $
     "  <input name="username" />" <>
     "</form>"
 
+-- http://hackage.haskell.org/package/wai
 responseLBS ::
   Status -> [Header] -> ByteString -> Response
 ```
@@ -305,6 +306,7 @@ loginGet =
     "  <input name="username" />" <>
     "</form>"
 
+-- http://hackage.haskell.org/package/wai
 responseLBS ::
   Status -> [Header] -> ByteString -> Response
 ```
@@ -325,10 +327,10 @@ post "/login" $ do
 class: code
 
 ```haskell
--- hackage.haskell.org/package/wai
+-- http://hackage.haskell.org/package/wai
 requestBody :: Request -> IO ByteString
 
--- hackage.haskell.org/package/http-types
+-- http://hackage.haskell.org/package/http-types
 parseQueryText ::
   ByteString -> [(Text, Maybe Text)]
 ```
@@ -338,10 +340,10 @@ parseQueryText ::
 class: code
 
 ```haskell
--- hackage.haskell.org/package/wai
+-- http://hackage.haskell.org/package/wai
 requestBody :: Request -> IO ByteString
 
--- hackage.haskell.org/package/http-types
+-- http://hackage.haskell.org/package/http-types
 parseQueryText ::
   ByteString -> [(Text, Maybe Text)]
 
@@ -427,13 +429,17 @@ class: code
 
 ```haskell
     Just user ->
-      setMyCookie (makeCookie "session" user) $
-        ...
 
+        myRedirect ("/profile/" <> user)
 
-
-setMyCookie :: Cookie -> Response -> Response
+myRedirect :: Text -> Response
+myRedirect uri =
+  responseLBS
+    status302
+    [("Location", uri)]
+    "<body>Redirect"
 ```
+
 ---
 
 class: code
@@ -446,6 +452,9 @@ class: code
 myRedirect :: Text -> Response
 
 setMyCookie :: Cookie -> Response -> Response
+
+-- http://hackage.haskell.org/package/cookie
+makeCookie :: ByteString -> ByteString -> Cookie
 ```
 
 
@@ -489,7 +498,6 @@ userGet user request -> do
     Just session ->
       ...
 
-
 getMyCookie :: Request -> Text -> Maybe Text
 getMyCookie request name = do
   ...
@@ -508,13 +516,12 @@ userGet user request -> do
     Just session ->
       ...
 
-
 getMyCookie :: Request -> Text -> Maybe Text
 getMyCookie request name = do
  cs <- lookup "Cookie" (requestHeaders request)
  lookup name (parseCookies cs)
 
--- hackage.haskell.org/package/cookie
+-- http://hackage.haskell.org/package/cookie
 parseCookies : ByteString -> Cookies
 ```
 
@@ -580,6 +587,7 @@ class: code
 
 
 
+-- http://hackage.haskell.org/package/wai
 pathInfo :: Request -> [Text]
 ```
 
@@ -596,6 +604,7 @@ myApp request =
     ["profile", user] ->
       ...
 
+-- http://hackage.haskell.org/package/wai
 pathInfo :: Request -> [Text]
 ```
 
@@ -643,6 +652,7 @@ class: code
 
 
 
+-- http://hackage.haskell.org/package/wai
 requestMethod :: Request -> Method
 ```
 
@@ -662,6 +672,7 @@ myApp request =
            ...
 
 
+-- http://hackage.haskell.org/package/wai
 requestMethod :: Request -> Method
 ```
 
@@ -692,10 +703,41 @@ myApp request =
 
 ---
 
+class: center, middle, section-yellow, heading-black
+
+# Complete
+
+---
+
 class: code
 
 ```haskell
-routes :: ScottyM ()
+myApp :: Request -> IO Response
+myApp request =
+  case pathOf request of
+    ["login"] ->
+      case requestMethod request of
+        "GET" ->
+           loginGet
+        "POST" ->
+           loginPost request
+    ["profile", user] ->
+      case requestMethod request of
+        "GET" ->
+           userGet user request
+```
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Type Safe Routing?
+
+---
+
+class: code
+
+```haskell
 routes = do
   ...
   get "/profile/:user" $
@@ -707,7 +749,6 @@ routes = do
 class: code
 
 ```haskell
-routes :: ScottyM ()
 routes = do
   ...
   get "/profile/:foo" $
@@ -773,6 +814,7 @@ class: code
 ```haskell
 type Application = Request -> IO Response
 
+
 run :: Port -> Application -> IO ()
 ```
 
@@ -793,7 +835,7 @@ class: code
 ```haskell
 type Application = Request -> IO Response
 
--- hackage.haskell.org/package/warp
+-- http://hackage.haskell.org/package/warp
 run :: Port -> Application -> IO ()
 ```
 
@@ -804,7 +846,7 @@ class: code
 ```haskell
 type Application = Request -> IO Response
 
--- hackage.haskell.org/package/warp
+-- http://hackage.haskell.org/package/warp
 run :: Port -> Application -> IO ()
 
 main :: IO ()
@@ -825,9 +867,9 @@ main =
 
 ---
 
-class: center, middle, section-aqua, heading-white
+class: image, bottom
 
-# White Lie
+<img src="http://berkreviews.com/wp-content/uploads/2016/12/untitled1.png" />
 
 ---
 
@@ -944,7 +986,7 @@ homeGet         =
 
 
 
--- hackage.haskell.org/package/http-media
+-- http://hackage.haskell.org/package/http-media
 mapAcceptMedia ::
   Accept -> [(MediaType, b)] -> Maybe b
 ```
@@ -962,7 +1004,7 @@ homeGet request =
       , ("application/json", "{}")
       ]
 
--- hackage.haskell.org/package/http-media
+-- http://hackage.haskell.org/package/http-media
 mapAcceptMedia ::
   Accept -> [(MediaType, b)] -> Maybe b
 ```
