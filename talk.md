@@ -395,6 +395,48 @@ get "/profile/:user" $ do
 class: code
 
 ```haskell
+userGet :: User -> Request -> Response
+userGet user request -> do
+  case getMyCookie request "session" of
+    Nothing ->
+      ....
+    Just session ->
+      ...
+```
+
+---
+
+class: code
+
+```haskell
+userGet :: User -> Request -> Response
+userGet user request -> do
+  case getMyCookie request "session" of
+    Nothing ->
+      ....
+    Just session ->
+      ...
+
+
+getMyCookie :: Request -> Text -> Maybe Text
+getMyCookie request name = do
+  ...
+```
+
+---
+
+class: code
+
+```haskell
+userGet :: User -> Request -> Response
+userGet user request -> do
+  case getMyCookie request "session" of
+    Nothing ->
+      ....
+    Just session ->
+      ...
+
+
 getMyCookie :: Request -> Text -> Maybe Text
 getMyCookie request name = do
  cs <- lookup "Cookie" (requestHeaders request)
@@ -452,9 +494,17 @@ routes = do
 
 ---
 
-class: center, middle, code
+class: code
 
 ```haskell
+
+
+
+
+
+
+
+
 pathInfo :: Request -> [Text]
 ```
 
@@ -470,6 +520,8 @@ myRoutes request =
       ...
     ["profile", user] ->
       ...
+
+pathInfo :: Request -> [Text]
 ```
 
 ---
@@ -507,12 +559,21 @@ myRoutes request =
 
 ---
 
-class: middle, center, code
+class: code
 
 ```haskell
-requestMethod :: Request -> Method
 
-type Method = ByteString
+
+
+
+
+
+
+
+
+
+
+requestMethod :: Request -> Method
 ```
 
 ---
@@ -529,6 +590,9 @@ myRoutes request =
            ...
         "POST" ->
            ...
+
+
+requestMethod :: Request -> Method
 ```
 
 ---
@@ -567,7 +631,19 @@ routes :: ScottyM ()
 routes = do
   ...
   get "/profile/:user" $
-    user <- getParam "username"
+    user <- getParam "user"
+```
+
+---
+
+class: code
+
+```haskell
+routes :: ScottyM ()
+routes = do
+  ...
+  get "/profile/:foo" $
+    user <- getParam "bar"
 ```
 
 ???
@@ -578,10 +654,10 @@ routes = do
 
 ## Haskell Routing
 
-- web-routes
-- snap-web-routes
-- web-routes-boomerang
-- reroute
+- [web-routes](http://hackage.haskell.org/package/web-routes)
+- [web-routes-boomerang](http://hackage.haskell.org/package/web-routes-boomerang)
+- [snap-web-routes](http://hackage.haskell.org/package/snap-web-routes)
+- [reroute](http://hackage.haskell.org/package/reroute)
 
 ???
 
@@ -723,15 +799,16 @@ class: code
 ```haskell
 type Application =
   Request ->
-  (Response -> IO ResponseReceived) ->
-  IO ResponseReceived
-```
+  IO Response
 
-```haskell
+
 main :: IO ()
 main =
-  run 8080 $ \request         -> do
-                myRoutes request
+  run 8080 $ \request         ->
+    case pathOf request of
+      ["login"] ->
+        return $
+          responseLBS status404 [] ...
 ```
 
 ---
@@ -743,14 +820,14 @@ type Application =
   Request ->
   (Response -> IO ResponseReceived) ->
   IO ResponseReceived
-```
 
-```haskell
 main :: IO ()
 main =
-  run 8080 $ \request respond -> do
-    response <- myRoutes request
-    respond response
+  run 8080 $ \request respond ->
+    case pathOf request of
+      ["login"] ->
+        respond $
+          responseLBS status404 [] ...
 ```
 
 
