@@ -559,8 +559,8 @@ pathInfo :: Request -> [Text]
 class: code
 
 ```haskell
-myRoutes :: Request -> IO Response
-myRoutes request =
+myApp :: Request -> IO Response
+myApp request =
   case pathOf request of
     ["login"] ->
       ...
@@ -581,8 +581,8 @@ class: center, middle, section-yellow, heading-black
 class: code
 
 ```haskell
-myRoutes :: Request -> IO Response
-myRoutes request =
+myApp :: Request -> IO Response
+myApp request =
   case pathOf request of
     ["login"] ->
       ...
@@ -622,8 +622,8 @@ requestMethod :: Request -> Method
 class: code
 
 ```haskell
-myRoutes :: Request -> IO Response
-myRoutes request =
+myApp :: Request -> IO Response
+myApp request =
   case pathOf request of
     ["login"] ->
       case requestMethod request of
@@ -647,8 +647,8 @@ class: center, middle, section-yellow, heading-black
 class: code
 
 ```haskell
-myRoutes :: Request -> IO Response
-myRoutes request =
+myApp :: Request -> IO Response
+myApp request =
   case pathOf request of
     ["login"] ->
       case requestMethod request of
@@ -839,7 +839,7 @@ main =
     case pathOf request of
       ["login"] ->
         return $
-          responseLBS status404 [] ...
+          responseLBS status200 [] ...
 ```
 
 ---
@@ -858,7 +858,7 @@ main =
     case pathOf request of
       ["login"] ->
         respond $
-          responseLBS status404 [] ...
+          responseLBS status200 [] ...
 ```
 
 
@@ -867,6 +867,218 @@ main =
 
 
 
+
+
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# More?
+
+???
+
+- Brief look at some other things
+
+
+
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Content negotation
+
+---
+
+class: code
+
+```haskell
+homeGet ::            Response
+homeGet         =
+  responseLBS status200 [] $
+    "<body>Hello"
+```
+
+---
+
+class: code
+
+```haskell
+homeGet ::            Response
+homeGet         =
+  responseLBS status200 [] $
+    "<body>Hello"
+
+
+
+
+-- hackage.haskell.org/package/http-media
+mapAcceptMedia ::
+  Accept -> [(MediaType, b)] -> Maybe b
+```
+
+---
+
+class: code
+
+```haskell
+homeGet :: Request -> Response
+homeGet request =
+  responseLBS status200 [] $
+    mapAcceptMedia (acceptHeader request) $ [
+        ("text/html", "<body>Hello")
+      , ("application/json", "{}")
+      ]
+
+-- hackage.haskell.org/package/http-media
+mapAcceptMedia ::
+  Accept -> [(MediaType, b)] -> Maybe b
+```
+
+
+
+
+
+
+
+
+
+
+
+---
+
+class: center, middle, section-yellow, heading-black
+
+# Error Handling
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> Response
+myApp =
+  case pathOf request of
+    ["profile", user] ->
+      ...
+
+
+
+    _ ->
+      responseLBS status404 []
+        "<body>Not found"
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> Response
+myApp =
+  case pathOf request of
+    ["profile", user] ->
+      case getUser request of
+        Nothing ->
+          responseLBS status404 []
+            "<body>Not found"
+    _ ->
+      responseLBS status404 []
+        "<body>Not found"
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> Response
+myApp =
+  case pathOf request of
+    ["profile", user] ->
+      case getUser request of
+        Nothing ->
+          notFound
+
+    _ ->
+      notFound
+
+notFound :: Response
+notFound =
+  responseLBS status404 []
+    "<body>Not found"
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> Either Error Response
+myApp =
+  case pathOf request of
+    ["profile", user] ->
+      case getUser request of
+        Nothing ->
+          Left NotFound
+
+    _ ->
+      Left NotFound
+
+data Error =
+    NotFound
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> Either Error Response
+
+errorResp :: Either Error Response -> Response
+errorResp e =
+  case e of
+    Left NotFound ->
+      responseLBS status404 []
+        "<body>Not found"
+    Right r ->
+      r
+
+data Error =
+    NotFound
+```
+
+---
+
+class: code
+
+```haskell
+data Error =
+    NotFound
+```
+
+---
+
+class: code
+
+```haskell
+data Error =
+    NotFound
+  | NotAllowed
+```
+
+---
+
+class: code
+
+```haskell
+data Error =
+    NotFound
+  | NotAllowed
+  | PermissionDenied
+```
 
 
 
