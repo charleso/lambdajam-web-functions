@@ -420,6 +420,7 @@ class: code
 
         myRedirect ("/profile/" <> user)
 
+
 myRedirect :: Text -> Response
 ```
 
@@ -431,6 +432,7 @@ class: code
     Just user ->
 
         myRedirect ("/profile/" <> user)
+
 
 myRedirect :: Text -> Response
 myRedirect uri =
@@ -449,7 +451,6 @@ class: code
       setMyCookie (makeCookie "session" user) $
         myRedirect ("/profile/" <> user)
 
-myRedirect :: Text -> Response
 
 setMyCookie :: Cookie -> Response -> Response
 
@@ -457,6 +458,23 @@ setMyCookie :: Cookie -> Response -> Response
 makeCookie :: ByteString -> ByteString -> Cookie
 ```
 
+---
+
+class: code
+
+```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- parseBody request
+  case lookup "username" b of
+    Nothing ->
+      return $
+        responseLBS status400 []
+          "<body>Bad request"
+    Just user ->
+      setMyCookie (makeCookie "session" user) $
+        myRedirect ("/profile/" <> user)
+```
 
 
 
@@ -610,9 +628,23 @@ pathInfo :: Request -> [Text]
 
 ---
 
-class: center, middle, section-yellow, heading-black
+class: code
 
-#### Warning: Pattern match(es) are non-exhaustive
+```haskell
+myApp :: Request -> IO Response
+myApp request =
+  case pathOf request of
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+
+-- http://hackage.haskell.org/package/wai
+pathInfo :: Request -> [Text]
+```
+
+<pre><code class="hljs"><span style="color: #FFC039;">Warning: Pattern match(es) are non-exhaustive</span>
+</code></pre>
 
 ---
 
@@ -651,6 +683,24 @@ class: code
 
 
 
+-- http://hackage.haskell.org/package/wai
+requestMethod :: Request -> Method
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> IO Response
+myApp request =
+  case pathOf request of
+    ["login"] ->
+      case requestMethod request of
+        "GET" ->
+           ...
+        "POST" ->
+           ...
 
 -- http://hackage.haskell.org/package/wai
 requestMethod :: Request -> Method
@@ -671,16 +721,12 @@ myApp request =
         "POST" ->
            ...
 
-
 -- http://hackage.haskell.org/package/wai
 requestMethod :: Request -> Method
 ```
 
----
-
-class: center, middle, section-yellow, heading-black
-
-#### Warning: Pattern match(es) are non-exhaustive
+<pre><code class="hljs"><span style="color: #FFC039;">Warning: Pattern match(es) are non-exhaustive</span>
+</code></pre>
 
 ---
 
