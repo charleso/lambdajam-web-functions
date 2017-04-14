@@ -57,7 +57,7 @@ class: center, middle, section-aqua, heading-white
 
 class: center, middle, section-aqua, heading-white
 
-# &lt;insert contrived example&gt;
+## &lt;insert contrived example&gt;
 
 ---
 
