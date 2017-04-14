@@ -906,13 +906,12 @@ type Application =
   IO Response
 
 
-main :: IO ()
-main =
-  run 8080 $ \request         ->
-    case pathOf request of
-      ["login"] ->
-        return $
-          responseLBS status200 [] ...
+myApp :: Application
+myApp request         =
+  case pathOf request of
+    ["login"] ->
+      return $
+        responseLBS status200 [] ...
 ```
 
 ---
@@ -925,13 +924,12 @@ type Application =
   (Response -> IO ResponseReceived) ->
   IO ResponseReceived
 
-main :: IO ()
-main =
-  run 8080 $ \request respond ->
-    case pathOf request of
-      ["login"] ->
-        respond $
-          responseLBS status200 [] ...
+myApp :: Application
+myApp request respond =
+  case pathOf request of
+    ["login"] ->
+      respond $
+        responseLBS status200 [] ...
 ```
 
 
