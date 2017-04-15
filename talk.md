@@ -1134,13 +1134,6 @@ myApp request =
 
 ---
 
-class: center, middle, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
-
-# Data + Functions
-
----
-
 class: code
 
 ```haskell
@@ -1148,13 +1141,13 @@ myApp :: Request -> IO Response
 myApp req =
   case pathInfo req of
     ["login"] ->
-      case reqMethod req of
+      case requestMethod req of
         "GET" ->
            loginGet
         "POST" ->
            loginPost req
     ["profile", user] ->
-      case reqMethod req of
+      case requestMethod req of
         "GET" ->
            userGet user req
 ```
@@ -1166,7 +1159,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp req =
-  case (reqMethod req, pathInfo req) of
+  case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
       loginGet
     ("POST", ["login"]) ->
@@ -1238,7 +1231,7 @@ class: code
 myApp :: Request -> IO Response
 myApp req =
 
-  case (reqMethod req, pathInfo req) of
+  case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
         loginGet
     ("POST", ["login"]) ->
