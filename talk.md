@@ -98,7 +98,7 @@ class: code
 ```haskell
 post "/login" $ do
   user <- param "username"
-  setCookie (makeCookie "session" user)
+  setCookie ("session", user)
   redirect ("/profile/" <> user)
 ```
 
@@ -398,7 +398,7 @@ class: code
 ```haskell
 post "/login" $ do
   user <- param "username"
-  setCookie (makeCookie "session" user)
+  setCookie ("session", user)
   redirect ("/profile/" <> user)
 ```
 
@@ -510,6 +510,9 @@ setCookie =
 -- http://hackage.haskell.org/package/wai
 mapResponseHeaders ::
  ([Header] -> [Header]) -> Response -> Response
+
+-- http://hackage.haskell.org/package/cookie
+renderCookie :: Cookie -> ByteString
 ```
 
 ---
@@ -520,11 +523,14 @@ class: code
 setCookie :: Cookie -> Response -> Response
 setCookie cookie =
   mapResponseHeaders $ \headers ->
-    ("Set-Cookie", cookie) : headers
+    ("Set-Cookie", renderCookie cookie) : headers
 
 -- http://hackage.haskell.org/package/wai
 mapResponseHeaders ::
  ([Header] -> [Header]) -> Response -> Response
+
+-- http://hackage.haskell.org/package/cookie
+renderCookie :: Cookie -> ByteString
 ```
 
 ---
@@ -613,7 +619,7 @@ loginPost request = do
       responseLBS status400 [] $
         "<body>Bad request"
     Just user ->
-      setCookie (makeCookie "session" user) $
+      setCookie ("session", user) $
         redirect ("/profile/" <> user)
 
 setCookie :: Cookie -> Response -> Response
