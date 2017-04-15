@@ -218,18 +218,37 @@ class: code
 
 ```haskell
 -- http://hackage.haskell.org/package/wai
-
 data Request
 
 pathInfo :: Request -> [Text]
 requestMethod :: Request -> Method
 requestHeaders :: Request -> [Header]
 
+data Response
+
+responseStatus :: Response -> Status
+responseHeaders :: Response -> [Header]
+```
+
+---
+
+class: code
+
+```haskell
+-- http://hackage.haskell.org/package/wai
+data Request
+
+pathInfo :: Request -> [Text]
+requestMethod :: Request -> Method
+requestHeaders :: Request -> [Header]
 
 data Response
 
 responseStatus :: Response -> Status
 responseHeaders :: Response -> [Header]
+
+-- http://hackage.haskell.org/package/http-types
+type Header = (ByteString, ByteString)
 ```
 
 ---
