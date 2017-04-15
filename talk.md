@@ -3,6 +3,10 @@ background-image: url(images/ambiata-chopsticks.png)
 
 # Caught in a web of functions
 
+???
+
+- "Part of my job is writing web applications in Haskell"
+
 ---
 
 class: middle
@@ -369,6 +373,23 @@ status200 :: Status
 
 html :: ByteString -> Response
 html =
+  ???
+```
+
+---
+
+class: code
+
+```haskell
+-- http://hackage.haskell.org/package/wai
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
+
+-- http://hackage.haskell.org/package/http-types
+status200 :: Status
+
+html :: ByteString -> Response
+html =
   responseLBS
     status200
     [("Content-Type", "text/html")]
@@ -439,6 +460,15 @@ class: code
 ```haskell
 
           param
+```
+
+---
+
+class: code
+
+```haskell
+-- http://hackage.haskell.org/package/wai
+requestBody :: Request -> IO ByteString
 ```
 
 ---
@@ -1236,6 +1266,10 @@ myApp     =
 
 ---
 
+# Different piece
+
+---
+
 class: code
 
 ```haskell
@@ -1436,9 +1470,11 @@ myApp request respond =
 
 ---
 
-class: center, middle, section-aqua, heading-white
+class: middle
 
-# What web framework should I use?
+<a href="https://www.reddit.com/r/haskell/comments/16kqe0/recommended_haskell_web_framework_for_beginners/">
+  <img src="images/recommended_haskell.png" width="700" />
+</a>
 
 ---
 
@@ -1454,12 +1490,6 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-class: center, middle, section-aqua, heading-white
-
-# Data + Functions
-
----
-
 ## Web Libraries
 
 - [wai](https://hackage.haskell.org/package/wai)
@@ -1467,6 +1497,12 @@ class: center, middle, section-aqua, heading-white
 - [cookie](https://hackage.haskell.org/package/cookie)
 - [http-media](https://hackage.haskell.org/package/http-media)
 - [wai-extra](https://hackage.haskell.org/package/wai-extra)
+
+---
+
+class: center, middle, section-aqua, heading-white
+
+# Data + Functions
 
 ---
 
