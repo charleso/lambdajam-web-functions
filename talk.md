@@ -204,33 +204,32 @@ type Application = Request -> IO Response
 
 class: center, middle, section-aqua, heading-white
 
-# Web Application Interface
+# WAI
 
 ---
 
 class: center, middle, section-aqua, heading-white
 
-# WAI
+# Web Application Interface
 
 ---
 
 class: code
 
 ```haskell
-data Request =
-  Request {
-      pathInfo :: [Text]
-    , requestMethod :: Method
-    , requestHeaders :: [Header]
-    , ...
-    }
+-- http://hackage.haskell.org/package/wai
 
-data Response =
-  Response {
-      responseStatus :: Status
-    , responseHeaders :: [Header]
-    , ...
-    }
+data Request
+
+pathInfo :: Request -> [Text]
+requestMethod :: Request -> Method
+requestHeaders :: Request -> [Header]
+
+
+data Response
+
+responseStatus :: Response -> Status
+responseHeaders :: Response -> [Header]
 ```
 
 ---
@@ -301,6 +300,19 @@ loginGet =
     "<form method="POST" action="/login">" <>
     "  <input name="username" />" <>
     "</form>"
+```
+
+---
+
+class: code
+
+``` haskell
+loginGet :: Response
+loginGet =
+  html $
+    "<form method="POST" action="/login">" <>
+    "  <input name="username" />" <>
+    "</form>"
 
 html :: ByteString -> Response
 html =
@@ -312,9 +324,9 @@ html =
 class: code
 
 ```haskell
-
-
-
+-- http://hackage.haskell.org/package/wai
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
 
 
 
@@ -322,10 +334,6 @@ class: code
 html :: ByteString -> Response
 html =
   ???
-
--- http://hackage.haskell.org/package/wai
-responseLBS ::
-  Status -> [Header] -> ByteString -> Response
 ```
 
 ---
@@ -333,20 +341,18 @@ responseLBS ::
 class: code
 
 ```haskell
-
-
-
-
-
-
-
-html :: ByteString -> Response
-html =
-  responseLBS status200 [("Content-Type", "text/html")]
-
 -- http://hackage.haskell.org/package/wai
 responseLBS ::
   Status -> [Header] -> ByteString -> Response
+
+-- http://hackage.haskell.org/package/http-types
+status200 :: Status
+
+html :: ByteString -> Response
+html =
+  responseLBS
+    status200
+    [("Content-Type", "text/html")]
 ```
 
 ---
@@ -363,7 +369,9 @@ loginGet =
 
 html :: ByteString -> Response
 html =
-  responseLBS status200 [("Content-Type", "text/html")]
+  responseLBS
+    status200
+    [("Content-Type", "text/html")]
 ```
 
 ---
@@ -419,20 +427,6 @@ class: code
 class: code
 
 ```haskell
-params :: Request -> IO [(Text, Maybe Text)]
-params =
-  ???
-```
-
----
-
-class: code
-
-```haskell
-params :: Request -> IO [(Text, Maybe Text)]
-params =
-  ???
-
 -- http://hackage.haskell.org/package/wai
 requestBody :: Request -> IO ByteString
 
@@ -446,16 +440,17 @@ parseQueryText ::
 class: code
 
 ```haskell
+-- http://hackage.haskell.org/package/wai
+requestBody :: Request -> IO ByteString
+
+-- http://hackage.haskell.org/package/http-types
+parseQueryText ::
+  ByteString -> [(Text, Maybe Text)]
+
 params :: Request -> IO [(Text, Maybe Text)]
 params =
   requestBody >>= parseQueryText
 
--- http://hackage.haskell.org/package/wai
-requestBody :: Request -> IO ByteString
-
--- http://hackage.haskell.org/package/http-types
-parseQueryText ::
-  ByteString -> [(Text, Maybe Text)]
 ```
 
 ---
@@ -474,7 +469,7 @@ class: code
 class: code
 
 ```haskell
-redirect :: Text -> Response
+redirect :: ByteString -> Response
 redirect uri =
   responseLBS
     status302
@@ -512,7 +507,7 @@ setCookie =
   ???
 
 
--- http://hackage.haskell.org/package/wa
+-- http://hackage.haskell.org/package/wai
 mapResponseHeaders ::
  ([Header] -> [Header]) -> Response -> Response
 ```
@@ -523,9 +518,9 @@ class: code
 
 ```haskell
 setCookie :: Cookie -> Response -> Response
-setCookie c =
-  mapResponseHeaders $ \hs ->
-    ("Set-Cookie", c) : hs
+setCookie cookie =
+  mapResponseHeaders $ \headers ->
+    ("Set-Cookie", cookie) : headers
 
 -- http://hackage.haskell.org/package/wai
 mapResponseHeaders ::
@@ -602,7 +597,7 @@ loginPost request = do
       ...
         redirect ("/profile/" <> user)
 
-redirect :: Text -> Response
+redirect :: ByteString -> Response
 ```
 
 ---
@@ -739,6 +734,7 @@ class: code
 
 
         status
+        html
 ```
 
 ---
@@ -746,9 +742,11 @@ class: code
 class: code
 
 ```haskell
-status :: Status -> Response -> Response
-status =
-  ???
+html :: ByteString -> Response
+html =
+  responseLBS
+    status200
+    [("Content-Type", "text/html")]
 ```
 
 ---
@@ -756,31 +754,11 @@ status =
 class: code
 
 ```haskell
-status :: Status -> Response -> Response
-status =
-  ???
-
--- http://hackage.haskell.org/package/wai
-data Response {
-  ...
-  , responseStatus :: Status
-  }
-```
-
----
-
-class: code
-
-```haskell
-status :: Status -> Response -> Response
-status status response =
-  response { responseStatus = status }
-
--- http://hackage.haskell.org/package/wai
-data Response {
-  ...
-  , responseStatus :: Status
-  }
+html :: Status -> ByteString -> Response
+html status =
+  responseLBS
+    status
+    [("Content-Type", "text/html")]
 ```
 
 ---
@@ -840,7 +818,7 @@ userGet user request -> do
 
 
 
-redirect :: Text -> Response
+redirect :: ByteString -> Response
 ```
 
 ---
@@ -855,12 +833,13 @@ userGet user request -> do
       redirect "/login"
     Just session ->
       if session /= user then
-        ...              $
-          html "<body>Not permitted"
+        html status403 $
+          "<body>Not permitted"
       else
-        html "<body>Hello"
+        html status200 $
+          "<body>Hello"
 
-html :: ByteString -> Response
+html :: Status -> ByteString -> Response
 ```
 
 ---
@@ -875,30 +854,11 @@ userGet user request -> do
       redirect "/login"
     Just session ->
       if session /= user then
-        status status403 $
-          html "<body>Not permitted"
+        html status403 $
+          "<body>Not permitted"
       else
-        html "<body>Hello"
-
-status :: Status -> Response -> Response
-```
-
----
-
-class: code
-
-```haskell
-userGet :: User -> Request -> Response
-userGet user request -> do
-  case getCookie request "session" of
-    Nothing ->
-      redirect "/login"
-    Just session ->
-      if session /= user then
-        status status403 $
-          html "<body>Not permitted"
-      else
-        html "<body>Hello"
+        html status200 $
+          "<body>Hello"
 ```
 
 ---
@@ -929,13 +889,11 @@ class: center, middle, section-aqua, heading-white
 class: code
 
 ```haskell
-routes = do
-  get "/login" $
-    ...
-  post "/login" $
-    ...
-  get "/profile/:user" $
-    ...
+loginGet :: IO Response
+
+loginPost :: Request -> IO Response
+
+userGet :: User -> Request -> IO Response
 ```
 
 ---
@@ -950,12 +908,6 @@ routes = do
     ...
   get "/profile/:user" $
     ...
-
-loginGet :: IO Response
-
-loginPost :: Request -> IO Response
-
-userGet :: User -> Request -> IO Response
 ```
 
 ---
@@ -1037,8 +989,8 @@ myApp request =
     ["profile", user] ->
       ...
     _ ->
-      status status404 $
-        html "<body>Not found"
+      html status404 $
+        "<body>Not found"
 ```
 
 ???
@@ -1121,15 +1073,16 @@ myApp request =
         "POST" ->
            ...
         _ ->
-          status status405 $
-            html "<body>Not Allowed"
+          html status405 $
+            "<body>Not Allowed"
 ```
 
 ---
 
-class: center, middle, section-yellow, heading-black
+class: center, middle, heading-white
+background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
 
-# Complete
+# Data + Functions
 
 ---
 
