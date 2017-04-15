@@ -408,6 +408,10 @@ loginPost request = do
 class: code
 
 ```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- parseBody request
+  case lookup "username" b of
     Just user ->
 ```
 
@@ -416,6 +420,10 @@ class: code
 class: code
 
 ```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- parseBody request
+  case lookup "username" b of
     Just user ->
 
         myRedirect ("/profile/" <> user)
@@ -429,6 +437,10 @@ myRedirect :: Text -> Response
 class: code
 
 ```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- parseBody request
+  case lookup "username" b of
     Just user ->
 
         myRedirect ("/profile/" <> user)
@@ -447,6 +459,10 @@ myRedirect uri =
 class: code
 
 ```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- parseBody request
+  case lookup "username" b of
     Just user ->
       setMyCookie (makeCookie "session" user) $
         myRedirect ("/profile/" <> user)
@@ -616,7 +632,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       ...
     ["profile", user] ->
@@ -633,7 +649,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       ...
     ["profile", user] ->
@@ -653,7 +669,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       ...
     ["profile", user] ->
@@ -694,7 +710,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       case requestMethod request of
         "GET" ->
@@ -713,7 +729,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       case requestMethod request of
         "GET" ->
@@ -735,7 +751,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       case requestMethod request of
         "GET" ->
@@ -760,7 +776,7 @@ class: code
 ```haskell
 myApp :: Request -> IO Response
 myApp request =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       case requestMethod request of
         "GET" ->
@@ -771,6 +787,22 @@ myApp request =
       case requestMethod request of
         "GET" ->
            userGet user request
+```
+
+---
+
+class: code
+
+```haskell
+myApp :: Request -> IO Response
+myApp request =
+  case (requestMethod request, pathInfo request) of
+    ("GET", ["login"]) ->
+      loginGet
+    ("POST", ["login"]) ->
+      loginPost request
+    ("GET", ["profile", user]) ->
+      userGet user request
 ```
 
 ---
@@ -898,7 +930,7 @@ run :: Port -> Application -> IO ()
 main :: IO ()
 main =
   run 8080 $ \request ->
-    case pathOf request of
+    case pathInfo request of
       ["login"] ->
         ...
       ["profile", user] ->
@@ -954,7 +986,7 @@ type Application =
 
 myApp :: Application
 myApp request         =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       return $
         responseLBS status200 [] ...
@@ -972,7 +1004,7 @@ type Application =
 
 myApp :: Application
 myApp request respond =
-  case pathOf request of
+  case pathInfo request of
     ["login"] ->
       respond $
         responseLBS status200 [] ...
@@ -1076,7 +1108,7 @@ class: code
 ```haskell
 myApp :: Request -> Response
 myApp =
-  case pathOf request of
+  case pathInfo request of
     ["profile", user] ->
       ...
 
@@ -1094,7 +1126,7 @@ class: code
 ```haskell
 myApp :: Request -> Response
 myApp =
-  case pathOf request of
+  case pathInfo request of
     ["profile", user] ->
       case getUser request of
         Nothing ->
@@ -1112,7 +1144,7 @@ class: code
 ```haskell
 myApp :: Request -> Response
 myApp =
-  case pathOf request of
+  case pathInfo request of
     ["profile", user] ->
       case getUser request of
         Nothing ->
@@ -1134,7 +1166,7 @@ class: code
 ```haskell
 myApp :: Request -> Either Error Response
 myApp =
-  case pathOf request of
+  case pathInfo request of
     ["profile", user] ->
       case getUser request of
         Nothing ->
@@ -1239,6 +1271,7 @@ class: center, middle, section-aqua, heading-white
 - [wai](https://hackage.haskell.org/package/wai)
 - [http-types](https://hackage.haskell.org/package/http-types)
 - [cookie](https://hackage.haskell.org/package/cookie)
+- [http-media](https://hackage.haskell.org/package/http-media)
 - [wai-extra](https://hackage.haskell.org/package/wai-extra)
 
 ---
