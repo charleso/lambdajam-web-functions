@@ -987,8 +987,8 @@ pathInfo :: Request -> [Text]
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       ...
@@ -1004,8 +1004,8 @@ pathInfo :: Request -> [Text]
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       ...
@@ -1036,8 +1036,8 @@ class: image, top
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       ...
@@ -1077,8 +1077,8 @@ requestMethod :: Request -> Method
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       case requestMethod request of
@@ -1096,8 +1096,8 @@ requestMethod :: Request -> Method
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       case requestMethod request of
@@ -1118,8 +1118,8 @@ requestMethod :: Request -> Method
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp request =
+routes :: Request -> IO Response
+routes request =
   case pathInfo request of
     ["login"] ->
       case requestMethod request of
@@ -1137,8 +1137,8 @@ myApp request =
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp req =
+routes :: Request -> IO Response
+routes req =
   case pathInfo req of
     ["login"] ->
       case requestMethod req of
@@ -1157,8 +1157,8 @@ myApp req =
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp req =
+routes :: Request -> IO Response
+routes req =
   case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
       loginGet
@@ -1173,6 +1173,19 @@ myApp req =
 class: center, middle, section-yellow, heading-black
 
 # Type Safe Routing?
+
+---
+
+class: code
+
+```haskell
+routes :: Request -> IO Response
+routes req =
+  case (requestMethod req, pathInfo req) of
+    ...
+    ("GET", ["profile", user]) ->
+        ...
+```
 
 ---
 
@@ -1228,8 +1241,8 @@ class: image, top
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp req =
+routes :: Request -> IO Response
+routes req =
 
   case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
@@ -1245,8 +1258,8 @@ myApp req =
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp     =
+routes :: Request -> IO Response
+routes     =
 
 
 
@@ -1266,8 +1279,8 @@ myApp     =
 class: code
 
 ```haskell
-myApp :: Request -> IO Response
-myApp     =
+routes :: Request -> IO Response
+routes     =
   -- https://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
@@ -1412,8 +1425,8 @@ type Application =
   IO Response
 
 
-myApp :: Application
-myApp request         =
+routes :: Application
+routes request         =
   case pathInfo request of
     ["login"] ->
       return $
@@ -1430,8 +1443,8 @@ type Application =
   (Response -> IO ResponseReceived) ->
   IO ResponseReceived
 
-myApp :: Application
-myApp request respond =
+routes :: Application
+routes request respond =
   case pathInfo request of
     ["login"] ->
       respond $
