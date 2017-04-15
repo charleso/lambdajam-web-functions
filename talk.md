@@ -15,16 +15,16 @@ class: middle
 
 class: middle
 
-<a href="https://www.reddit.com/r/haskell/comments/1y3eff/the_simplest_haskell_web_framework_is/">
-  <img src="images/recommended_haskell_3.png" width="700" />
+<a href="https://www.reddit.com/r/haskell/comments/2wfap0/web_development_using_haskell/">
+  <img src="images/recommended_haskell_4.png" width="700" />
 </a>
 
 ---
 
 class: middle
 
-<a href="https://www.reddit.com/r/haskell/comments/2wfap0/web_development_using_haskell/">
-  <img src="images/recommended_haskell_4.png" width="700" />
+<a href="https://www.reddit.com/r/haskell/comments/1y3eff/the_simplest_haskell_web_framework_is/">
+  <img src="images/recommended_haskell_3.png" width="700" />
 </a>
 
 ---
