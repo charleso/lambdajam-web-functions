@@ -1542,13 +1542,13 @@ class: center, middle, section-aqua, heading-white
 
 class: center, middle, section-aqua, heading-white
 
-# WAI
+# Request -> IO Response
 
 ---
 
 class: center, middle, section-aqua, heading-white
 
-# WAI = Data + Functions
+# Data + Functions
 
 ---
 
