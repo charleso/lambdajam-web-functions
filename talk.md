@@ -69,6 +69,11 @@ class: center, middle, section-aqua, heading-white
 
 # Scotty
 
+???
+
+- "Pseudo code"
+- "Even if you don't know Scotty should be understandable"
+
 ---
 
 class: code
