@@ -1208,78 +1208,17 @@ class: code
 
 ```haskell
 routes :: Request -> IO Response
-routes request =
-  case pathInfo request of
-    ["login"] ->
-      case requestMethod request of
-        "GET" ->
-           ...
-        "POST" ->
-           ...
-
--- http://hackage.haskell.org/package/wai
-requestMethod :: Request -> Method
-```
-
----
-
-class: code
-
-```haskell
-routes :: Request -> IO Response
-routes request =
-  case pathInfo request of
-    ["login"] ->
-      case requestMethod request of
-        "GET" ->
-           ...
-        "POST" ->
-           ...
-
--- http://hackage.haskell.org/package/wai
-requestMethod :: Request -> Method
-```
-
-<pre><code class="hljs"><span style="color: #FFC039;">Warning: Pattern match(es) are non-exhaustive</span>
-</code></pre>
-
----
-
-class: code
-
-```haskell
-routes :: Request -> IO Response
-routes request =
-  case pathInfo request of
-    ["login"] ->
-      case requestMethod request of
-        "GET" ->
-           ...
-        "POST" ->
-           ...
-        _ ->
-          html status405 $
-            "<body>Not Allowed"
-```
-
----
-
-class: code
-
-```haskell
-routes :: Request -> IO Response
 routes req =
-  case pathInfo req of
-    ["login"] ->
-      case requestMethod req of
-        "GET" ->
-           loginGet
-        "POST" ->
-           loginPost req
-    ["profile", user] ->
-      case requestMethod req of
-        "GET" ->
-           userGet user req
+  case (requestMethod req, pathInfo req) of
+    ("GET", ["login"]) ->
+      ...
+    ("POST", ["login"]) ->
+      ...
+    ("GET", ["profile", user]) ->
+      ...
+
+-- http://hackage.haskell.org/package/wai
+requestMethod :: Request -> Method
 ```
 
 ---
