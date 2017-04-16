@@ -1385,27 +1385,6 @@ class: code
 ```haskell
 routes :: Request -> IO Response
 routes     =
-
-
-
-        loginGet
-
-        loginPost
-
-        userGet
-```
-
----
-
-# Different piece
-
----
-
-class: code
-
-```haskell
-routes :: Request -> IO Response
-routes     =
   -- https://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
@@ -1416,6 +1395,10 @@ routes     =
         userGet <$ string "profile" <*> var
     ]
 ```
+
+---
+
+background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cada4?dpr=2&auto=format&fit=crop&w=1500&h=1875&q=80&cs=tinysrgb&crop=&bg=)
 
 
 
