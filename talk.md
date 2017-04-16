@@ -446,20 +446,34 @@ post "/login" $ do
 
 class: code
 
-```haskell
+```haskell-fg
 
           param
   setCookie
   redirect
 ```
 
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
+```
+
 ---
 
 class: code
 
-```haskell
+```haskell-fg
 
           param
+```
+
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
 ```
 
 ---
@@ -506,11 +520,18 @@ params =
 
 class: code
 
-```haskell
+```haskell-fg
 
 
 
   redirect
+```
+
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
 ```
 
 ---
@@ -530,10 +551,17 @@ redirect uri =
 
 class: code
 
-```haskell
+```haskell-fg
 
 
   setCookie
+```
+
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
 ```
 
 ---
@@ -710,7 +738,7 @@ get "/profile/:user" $ do
 
 class: code
 
-```haskell
+```haskell-fg
 
        getCookie
 
@@ -725,13 +753,43 @@ class: code
         html
 ```
 
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
+```
+
 ---
 
 class: code
 
-```haskell
+```haskell-fg
 
        getCookie
+```
+
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
 ```
 
 ---
@@ -779,7 +837,7 @@ parseCookies : ByteString -> Cookies
 
 class: code
 
-```haskell
+```haskell-fg
 
 
 
@@ -790,6 +848,21 @@ class: code
 
         status
         html
+```
+
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
 ```
 
 ---
@@ -820,7 +893,7 @@ html status =
 
 class: code
 
-```haskell
+```haskell-fg
 
        getCookie
 
@@ -833,6 +906,21 @@ class: code
         html
 
         html
+```
+
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
 ```
 
 ---
