@@ -1136,10 +1136,47 @@ routes request =
         "<body>Not found"
 ```
 
-???
+---
 
-- "Interesting, now _we_ have to deal with the 404"
-- Less than ideal, what does the 404 look like?
+class: code
+
+```haskell
+routes :: Request -> IO Response
+routes request =
+  case pathInfo request of
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      case getUser user of
+        Nothing ->
+          html status404 $
+            "<body>Not found"
+    _ ->
+      html status404 $
+        "<body>Not found"
+```
+
+---
+
+class: code
+
+```haskell
+routes :: Request -> IO Response
+routes request =
+  case pathInfo request of
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      case getUser user of
+        Nothing ->
+          notFound
+    _ ->
+      notFound
+
+notFound :: Response
+notFound =
+  html status404 $ "<body>Not found"
+```
 
 ---
 
