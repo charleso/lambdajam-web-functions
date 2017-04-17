@@ -1699,6 +1699,8 @@ routes req =
         loginPost req
     ("GET", ["profile", user]) ->
         userGet user req
+    _ ->
+        notFound
 ```
 
 ---
@@ -1730,6 +1732,7 @@ routes     =
     , routeGet $
         userGet <$ string "profile" <*> var
     ]
+        notFound
 ```
 
 ---
@@ -1746,6 +1749,8 @@ class: code
         loginPost
 
         userGet
+
+        notFound
 </code></pre>
 
 ```haskell-bg
@@ -1760,6 +1765,7 @@ routes     =
     , routeGet $
         userGet <$ string "profile" <*> var
     ]
+        notFound
 ```
 ---
 
