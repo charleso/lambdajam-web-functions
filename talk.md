@@ -510,6 +510,14 @@ post "/login" $ do
 class: code
 
 ```haskell
+
+requestBody :: Request ->    ByteString
+```
+---
+
+class: code
+
+```haskell
 -- http://hackage.haskell.org/package/wai
 requestBody :: Request -> IO ByteString
 ```
