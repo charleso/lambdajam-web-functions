@@ -1917,13 +1917,26 @@ type Application =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+routes :: Request -> IO Response
+routes request         =
+  case pathInfo request of
+    ["login"] ->
+      return $
+        html "..."
+</code></pre>
+
+```haskell-bg
 type Application =
   Request ->
-  IO Response
+  (Response -> IO ResponseReceived) ->
+  IO ResponseReceived
 
-
-routes :: Application
+routes :: Request -> IO Response
 routes request         =
   case pathInfo request of
     ["login"] ->
