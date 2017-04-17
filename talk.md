@@ -839,7 +839,7 @@ class: code
 
       redirect
 
-
+              param
 
         status
         html
@@ -938,6 +938,39 @@ class: code
 
 
 
+              param
+```
+
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
+```
+
+???
+
+- Just ignore for now
+
+---
+
+class: code
+
+```haskell-fgw
+
+
+
+
+
+
 
 
         status
@@ -994,7 +1027,7 @@ class: code
 
       redirect
 
-
+              param
 
         status
         html
@@ -1022,8 +1055,8 @@ get "/profile/:user" $ do
 class: code
 
 ```haskell
-userGet :: User -> Request -> Response
-userGet user request -> do
+userGet ::         Request -> Response
+userGet      request -> do
   case getCookie request "session" of
     Nothing ->
       ...
@@ -1042,9 +1075,24 @@ getCookie ::
 
 class: code
 
-```haskell
-userGet :: User -> Request -> Response
-userGet user request -> do
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+      redirect "/login"
+
+
+
+
+
+
+
+redirect :: ByteString -> Response
+</code></pre>
+
+```haskell-bg
+userGet ::         Request -> Response
+userGet      request -> do
   case getCookie request "session" of
     Nothing ->
       redirect "/login"
@@ -1062,7 +1110,50 @@ redirect :: ByteString -> Response
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">           User
+        user
+
+
+
+
+                    user
+</code></pre>
+
+```haskell-bg
+userGet :: User -> Request -> Response
+userGet user request -> do
+  case getCookie request "session" of
+    Nothing ->
+      redirect "/login"
+    Just session ->
+      if session /= user then
+        ...
+
+      else
+        ...
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+        html status403 $
+          "&lt;body>Not permitted"
+
+        html status200 $
+          "&lt;body>Hello"
+
+html :: Status -> ByteString -> Response
+</code></pre>
+
+```haskell-bg
 userGet :: User -> Request -> Response
 userGet user request -> do
   case getCookie request "session" of
@@ -1336,13 +1427,26 @@ class: center, middle, section-yellow, heading-black
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+    ("GET", ["profile", user]) ->
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes req =
   case (requestMethod req, pathInfo req) of
-    ...
+    ("GET", ["login"]) ->
+      loginGet
+    ("POST", ["login"]) ->
+      loginPost req
     ("GET", ["profile", user]) ->
-        ...
+      userGet user req
 ```
 
 ---
