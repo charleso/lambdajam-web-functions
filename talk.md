@@ -1289,7 +1289,7 @@ routes request =
 pathInfo :: Request -> [Text]
 ```
 
-<pre><code class="hljs"><span style="color: #FFC039;">Warning: Pattern match(es) are non-exhaustive</span>
+<pre><code class="hljs warning">Warning: Pattern match(es) are non-exhaustive
 </code></pre>
 
 ---
