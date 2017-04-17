@@ -131,7 +131,7 @@ get "/profile/:user" $ do
         status status403
         html "<body>Unauthorized"
       else
-        html "<body>Authorized"
+        html "<body>Hello"
 ```
 
 ???
