@@ -1597,6 +1597,8 @@ routes req =
       loginPost req
     ("GET", ["profile", user]) ->
       userGet user req
+    _ ->
+      notFound
 ```
 
 ---
@@ -1629,6 +1631,8 @@ routes req =
       loginPost req
     ("GET", ["profile", user]) ->
       userGet user req
+    _ ->
+      notFound
 ```
 
 ---
