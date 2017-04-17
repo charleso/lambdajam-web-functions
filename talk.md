@@ -1313,9 +1313,39 @@ routes = do
 class: code
 
 ```haskell
+routes
+```
+
+---
+
+class: code
+
+```haskell
+routes :: Request -> IO Response
+routes request =
+  ???
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">&nbsp;
 
 
 
+
+
+
+
+-- http://hackage.haskell.org/package/wai
+pathInfo :: Request -> [Text]
+</code></pre>
+
+```haskell-bg
+routes :: Request -> IO Response
+routes request =
+  ???
 
 
 
@@ -1329,7 +1359,19 @@ pathInfo :: Request -> [Text]
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  case pathInfo request of
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+
+-- http://hackage.haskell.org/package/wai
+pathInfo :: Request -> [Text]
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes request =
   case pathInfo request of
@@ -1346,7 +1388,19 @@ pathInfo :: Request -> [Text]
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  case pathInfo request of
+    ["login"] ->
+      ...
+    ["profile", user] ->
+      ...
+
+-- http://hackage.haskell.org/package/wai
+pathInfo :: Request -> [Text]
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes request =
   case pathInfo request of
