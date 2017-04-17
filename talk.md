@@ -628,8 +628,8 @@ class: code
 ```haskell
 setCookie :: Cookie -> Response -> Response
 setCookie cookie =
-  mapResponseHeaders $ \headers ->
-    ("Set-Cookie", renderCookie cookie) : headers
+  mapResponseHeaders $ \hds ->
+    ("Set-Cookie", renderCookie cookie) : hds
 
 -- http://hackage.haskell.org/package/wai
 mapResponseHeaders ::
