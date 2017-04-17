@@ -659,7 +659,18 @@ params :: Request -> IO [(Text, Maybe Text)]
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+  case lookup "username" b of
+    Nothing ->
+      ???
+
+    Just user ->
+      ...
+</code></pre>
+
+```haskell-bg
 loginPost :: Request -> IO Response
 loginPost request = do
   b <- params request
@@ -681,7 +692,16 @@ class: image, top
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+      responseLBS status400 [] $
+        "&lt;body>Bad request"
+</code></pre>
+
+```haskell-bg
 loginPost :: Request -> IO Response
 loginPost request = do
   b <- params request
@@ -697,7 +717,21 @@ loginPost request = do
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+
+      ...
+        redirect ("/profile/" <> user)
+
+redirect :: ByteString -> Response
+</code></pre>
+
+```haskell-bg
 loginPost :: Request -> IO Response
 loginPost request = do
   b <- params request
@@ -716,7 +750,21 @@ redirect :: ByteString -> Response
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+
+      setCookie ("session", user)
+
+
+setCookie :: Cookie -> Response -> Response
+</code></pre>
+
+```haskell-bg
 loginPost :: Request -> IO Response
 loginPost request = do
   b <- params request
@@ -729,6 +777,23 @@ loginPost request = do
         redirect ("/profile/" <> user)
 
 setCookie :: Cookie -> Response -> Response
+```
+
+---
+
+class: code
+
+```haskell
+loginPost :: Request -> IO Response
+loginPost request = do
+  b <- params request
+  case lookup "username" b of
+    Nothing ->
+      responseLBS status400 [] $
+        "<body>Bad request"
+    Just user ->
+      setCookie ("session", user) $
+        redirect ("/profile/" <> user)
 ```
 
 ---
