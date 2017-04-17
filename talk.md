@@ -1127,6 +1127,31 @@ class: code
 ```haskell
 userGet ::         Request -> Response
 userGet      request ->
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">&nbsp;
+
+       getCookie request "session"
+
+
+
+
+
+
+
+
+
+getCookie ::
+  Request -> ByteString -> Maybe ByteString
+</code></pre>
+
+```haskell-bg
+userGet ::         Request -> Response
+userGet      request ->
   case getCookie request "session" of
     Nothing ->
       ...
@@ -1818,16 +1843,6 @@ run :: Port -> Application -> IO ()
 
 ---
 
-class: center, middle, section-aqua, heading-white
-
-# Warp
-
-???
-
-- One of the most common web servers
-
----
-
 class: code
 
 ```haskell
@@ -1836,6 +1851,10 @@ type Application = Request -> IO Response
 -- http://hackage.haskell.org/package/warp
 run :: Port -> Application -> IO ()
 ```
+
+???
+
+- One of the most common web servers
 
 ---
 
