@@ -599,7 +599,7 @@ class: code
 
 ```haskell
 setCookie :: Cookie -> Response -> Response
-setCookie =
+setCookie cookie =
   ???
 ```
 
@@ -607,9 +607,22 @@ setCookie =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+-- http://hackage.haskell.org/package/wai
+mapResponseHeaders ::
+ ([Header] -> [Header]) -> Response -> Response
+
+-- http://hackage.haskell.org/package/cookie
+renderCookie :: Cookie -> ByteString
+</code></pre>
+
+```haskell-bg
 setCookie :: Cookie -> Response -> Response
-setCookie =
+setCookie cookie =
   ???
 
 
@@ -625,7 +638,13 @@ renderCookie :: Cookie -> ByteString
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  mapResponseHeaders $ \hds ->
+    ("Set-Cookie", renderCookie cookie) : hds
+</code></pre>
+
+```haskell-bg
 setCookie :: Cookie -> Response -> Response
 setCookie cookie =
   mapResponseHeaders $ \hds ->
