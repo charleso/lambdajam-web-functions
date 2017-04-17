@@ -1308,7 +1308,19 @@ class: image, top
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+
+      html status404 $
+        "&lt;body>Not found"
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes request =
   case pathInfo request of
@@ -1325,7 +1337,22 @@ routes request =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+      case getUser user of
+        Nothing ->
+          html status404 $
+            "&lt;body>Not found"
+
+      html status404 $
+        "&lt;body>Not found"
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes request =
   case pathInfo request of
@@ -1345,7 +1372,24 @@ routes request =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+
+
+
+          notFound
+
+      notFound
+
+notFound :: Response
+notFound =
+  html status404 $ "&lt;body>Not found"
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes request =
   case pathInfo request of
@@ -1738,7 +1782,19 @@ routes request         =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  (Response -> IO ResponseReceived) ->
+
+
+
+               respond
+
+
+      respond
+</code></pre>
+
+```haskell-bg
 type Application =
   Request ->
   (Response -> IO ResponseReceived) ->
