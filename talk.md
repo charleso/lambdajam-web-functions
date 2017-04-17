@@ -695,6 +695,10 @@ class: code
 
     Just user ->
       ...
+
+-- http://hackage.haskell.org/package/base/docs
+--   /Data-List.html#v:lookup
+lookup :: Eq a => a -> [(a, b)] -> Maybe b
 </code></pre>
 
 ```haskell-bg
@@ -707,6 +711,10 @@ loginPost request = do
 
     Just user ->
       ...
+
+-- http://hackage.haskell.org/package/base/docs
+--   /Data-List.html#v:lookup
+lookup :: Eq a => a -> [(a, b)] -> Maybe b
 ```
 
 ---
@@ -983,6 +991,39 @@ get "/profile/:user" $ do
         html "<body>Hello"
 ```
 
+---
+
+class: code
+
+```haskell-fgw
+              :user
+
+
+
+
+
+                    "user"
+```
+
+```haskell-bg
+get "/profile/:user" $ do
+  c <- getCookie "session"
+  case c of
+    Nothing ->
+      redirect "/login"
+    Just session -> do
+      user <- param "user"
+      if session /= user then do
+        status status403
+        html "<body>Not allowed"
+      else
+        html "<body>Hello"
+```
+
+???
+
+- Just ignore for now
+
 ???
 
 - Just ignore for now
@@ -1026,8 +1067,8 @@ get "/profile/:user" $ do
 class: code
 
 ```haskell
-html :: ByteString -> Response
-html =
+html ::           ByteString -> Response
+html        =
   responseLBS
     status200
     [("Content-Type", "text/html")]
