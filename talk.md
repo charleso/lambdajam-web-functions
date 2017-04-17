@@ -333,7 +333,7 @@ class: code
 
 class: code
 
-``` haskell
+```haskell
 loginGet :: Response
 loginGet =
   html $
@@ -346,7 +346,19 @@ loginGet =
 
 class: code
 
-``` haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  html
+
+
+
+
+html :: ByteString -> Response
+html =
+  ???
+</code></pre>
+
+```haskell-bg
 loginGet :: Response
 loginGet =
   html $
@@ -463,7 +475,7 @@ post "/login" $ do
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
           param
   setCookie
@@ -481,7 +493,7 @@ post "/login" $ do
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
           param
 ```
@@ -537,7 +549,7 @@ params =
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
 
 
@@ -568,7 +580,7 @@ redirect uri =
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
 
   setCookie
@@ -755,7 +767,7 @@ get "/profile/:user" $ do
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
        getCookie
 
@@ -789,7 +801,7 @@ get "/profile/:user" $ do
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
        getCookie
 ```
@@ -854,7 +866,7 @@ parseCookies : ByteString -> Cookies
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
 
 
@@ -910,7 +922,7 @@ html status =
 
 class: code
 
-```haskell-fg
+```haskell-fgw
 
        getCookie
 
