@@ -1386,7 +1386,21 @@ requestMethod :: Request -> Method
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+        requestMethod req
+     "GET"
+
+     "POST"
+
+     "GET"
+
+
+-- http://hackage.haskell.org/package/wai
+requestMethod :: Request -> Method
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes req =
   case (requestMethod req, pathInfo req) of
@@ -1519,7 +1533,20 @@ routes req =
 
 class: code
 
-```haskell
+<pre><code class="haskell haskell-fg">&nbsp;
+
+  -- https://hackage.haskell.org/package/waitra
+  waitraMiddleware [
+      routeGet $
+                 <* string "login"
+    , routePost $
+                  <* string "login"
+    , routeGet $
+                <$ string "profile" <*> var
+    ]
+</code></pre>
+
+```haskell-bg
 routes :: Request -> IO Response
 routes     =
   -- https://hackage.haskell.org/package/waitra
@@ -1533,6 +1560,35 @@ routes     =
     ]
 ```
 
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">routes :: Request -> IO Response
+
+
+
+
+        loginGet
+
+        loginPost
+
+        userGet
+</code></pre>
+
+```haskell-bg
+routes :: Request -> IO Response
+routes     =
+  -- https://hackage.haskell.org/package/waitra
+  waitraMiddleware [
+      routeGet $
+        loginGet <* string "login"
+    , routePost $
+        loginPost <* string "login"
+    , routeGet $
+        userGet <$ string "profile" <*> var
+    ]
+```
 ---
 
 background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cada4?dpr=2&auto=format&fit=crop&w=1500&h=1875&q=80&cs=tinysrgb&crop=&bg=)
