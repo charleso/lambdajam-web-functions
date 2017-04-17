@@ -166,13 +166,13 @@ class: code
 
 ```haskell
 
+data Request
 
 
 
 
 
-
-type Application = ???
+data Response
 ```
 
 ---
@@ -181,8 +181,13 @@ class: code
 
 ```haskell
 
+data Request
 
 
+
+
+
+data Response
 
 
 
@@ -196,8 +201,13 @@ class: code
 
 ```haskell
 
+data Request
 
 
+
+
+
+data Response
 
 
 
@@ -237,6 +247,8 @@ data Response
 
 responseStatus :: Response -> Status
 responseHeaders :: Response -> [Header]
+
+type Application = Request -> IO Response
 ```
 
 ---
