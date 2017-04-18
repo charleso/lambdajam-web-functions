@@ -221,18 +221,6 @@ type Application = Request -> IO Response
 
 ---
 
-class: center, middle, section-aqua, heading-white
-
-# WAI
-
----
-
-class: center, middle, section-aqua, heading-white
-
-# Web Application Interface
-
----
-
 class: code
 
 ```haskell
