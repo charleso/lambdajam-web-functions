@@ -1114,7 +1114,7 @@ class: code
 
 ```haskell
 userGet ::         Request -> Response
-userGet      request ->
+userGet      request =
 ```
 
 ---
@@ -1139,7 +1139,7 @@ getCookie ::
 
 ```haskell-bg
 userGet ::         Request -> Response
-userGet      request ->
+userGet      request =
   case getCookie request "session" of
     Nothing ->
       ...
@@ -1175,7 +1175,7 @@ redirect :: ByteString -> Response
 
 ```haskell-bg
 userGet ::         Request -> Response
-userGet      request ->
+userGet      request =
   case getCookie request "session" of
     Nothing ->
       redirect "/login"
@@ -1204,7 +1204,7 @@ class: code
 
 ```haskell-bg
 userGet :: User -> Request -> Response
-userGet user request ->
+userGet user request =
   case getCookie request "session" of
     Nothing ->
       redirect "/login"
@@ -1238,7 +1238,7 @@ html :: Status -> ByteString -> Response
 
 ```haskell-bg
 userGet :: User -> Request -> Response
-userGet user request ->
+userGet user request =
   case getCookie request "session" of
     Nothing ->
       redirect "/login"
@@ -1259,7 +1259,7 @@ class: code
 
 ```haskell
 userGet :: User -> Request -> Response
-userGet user request ->
+userGet user request =
   case getCookie request "session" of
     Nothing ->
       redirect "/login"
