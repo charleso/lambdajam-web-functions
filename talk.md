@@ -931,6 +931,24 @@ getCookie request name = do
   ...
 
 
+-- http://hackage.haskell.org/package/wai
+requestHeaders :: Request -> [Header]
+```
+
+---
+
+class: code
+
+```haskell
+getCookie ::
+  Request -> ByteString -> Maybe ByteString
+getCookie request name = do
+  ...
+
+
+-- http://hackage.haskell.org/package/wai
+requestHeaders :: Request -> [Header]
+
 -- http://hackage.haskell.org/package/cookie
 parseCookies : ByteString -> Cookies
 ```
@@ -945,6 +963,9 @@ getCookie ::
 getCookie request name = do
  cs <- lookup "Cookie" (requestHeaders request)
  lookup name (parseCookies cs)
+
+-- http://hackage.haskell.org/package/wai
+requestHeaders :: Request -> [Header]
 
 -- http://hackage.haskell.org/package/cookie
 parseCookies : ByteString -> Cookies
