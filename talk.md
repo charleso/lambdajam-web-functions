@@ -566,10 +566,41 @@ class: code
 ```haskell
 redirect :: ByteString -> Response
 redirect uri =
+  ???
+```
+
+---
+
+class: code
+
+```haskell
+redirect :: ByteString -> Response
+redirect uri =
+  ???
+
+
+
+
+-- http://hackage.haskell.org/package/wai
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
+```
+
+---
+
+class: code
+
+```haskell
+redirect :: ByteString -> Response
+redirect uri =
   responseLBS
     status302
     [("Location", uri)]
     ""
+
+-- http://hackage.haskell.org/package/wai
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
 ```
 
 ---
