@@ -162,6 +162,21 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
+<table style="height: 100%">
+  <tbody>
+    <tr>
+      <td width="10%" style="background-color: red">Web Server</td>
+      <td width="10%" style="background-color: yellow">Web Application</td>
+      <td rowspan="2" width="40%" style="background-color: blue">Application</td>
+    </tr>
+    <tr>
+      <td colspan="2" width="10%" style="background-color: green">Foo???</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
 class: code
 
 ```haskell
@@ -192,51 +207,7 @@ data Response
 
 
 
-type Application = Request ->    Response
-```
-
----
-
-class: code
-
-```haskell
-
-data Request
-
-
-
-
-
-data Response
-
-
-
-
-type Application = Request -> IO Response
-```
-
-???
-
-- "But this is haskell and we need to be able to do side effects"
-
----
-
-class: code
-
-```haskell
--- http://hackage.haskell.org/package/wai
-data Request
-
-pathInfo :: Request -> [Text]
-requestMethod :: Request -> Method
-requestHeaders :: Request -> [Header]
-
-data Response
-
-responseStatus :: Response -> Status
-responseHeaders :: Response -> [Header]
-
-type Application = Request -> IO Response
+type Application = Request -> Response
 ```
 
 ---
@@ -256,8 +227,7 @@ data Response
 responseStatus :: Response -> Status
 responseHeaders :: Response -> [Header]
 
--- http://hackage.haskell.org/package/http-types
-type Header = (ByteString, ByteString)
+type Application = Request -> Response
 ```
 
 ---
@@ -342,7 +312,7 @@ class: code
 
 
 html :: ByteString -> Response
-html =
+html body =
   ???
 </code></pre>
 
@@ -355,7 +325,7 @@ loginGet =
     "</form>"
 
 html :: ByteString -> Response
-html =
+html body =
   ???
 ```
 
@@ -372,24 +342,7 @@ responseLBS ::
 
 
 html :: ByteString -> Response
-html =
-  ???
-```
-
----
-
-class: code
-
-```haskell
--- http://hackage.haskell.org/package/wai
-responseLBS ::
-  Status -> [Header] -> ByteString -> Response
-
--- http://hackage.haskell.org/package/http-types
-status200 :: Status
-
-html :: ByteString -> Response
-html =
+html body =
   ???
 ```
 
@@ -406,10 +359,28 @@ responseLBS ::
 status200 :: Status
 
 html :: ByteString -> Response
-html =
+html body =
+  ???
+```
+
+---
+
+class: code
+
+```haskell
+-- hackage: wai
+responseLBS ::
+  Status -> [Header] -> ByteString -> Response
+
+-- hackage: http-types
+status200 :: Status
+
+html :: ByteString -> Response
+html body =
   responseLBS
     status200
     [("Content-Type", "text/html")]
+    body
 ```
 
 ---
@@ -425,10 +396,11 @@ loginGet =
     "</form>"
 
 html :: ByteString -> Response
-html =
+html body =
   responseLBS
     status200
     [("Content-Type", "text/html")]
+    body
 ```
 
 ---
@@ -491,54 +463,6 @@ post "/login" $ do
   user <- param "username"
   setCookie ("session", user)
   redirect ("/profile/" <> user)
-```
-
----
-
-class: code
-
-```haskell
-
-requestBody :: Request ->    ByteString
-```
----
-
-class: code
-
-```haskell
--- http://hackage.haskell.org/package/wai
-requestBody :: Request -> IO ByteString
-```
-
----
-
-class: code
-
-```haskell
--- http://hackage.haskell.org/package/wai
-requestBody :: Request -> IO ByteString
-
--- http://hackage.haskell.org/package/http-types
-parseQueryText ::
-  ByteString -> [(Text, Maybe Text)]
-```
-
----
-
-class: code
-
-```haskell
--- http://hackage.haskell.org/package/wai
-requestBody :: Request -> IO ByteString
-
--- http://hackage.haskell.org/package/http-types
-parseQueryText ::
-  ByteString -> [(Text, Maybe Text)]
-
-params :: Request -> IO [(Text, Maybe Text)]
-params =
-  requestBody >>= parseQueryText
-
 ```
 
 ---
@@ -690,7 +614,7 @@ renderCookie :: Cookie -> ByteString
 class: code
 
 ```haskell
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
     ...
@@ -721,7 +645,7 @@ lookup :: Eq a => a -> [(a, b)] -> Maybe b
 </code></pre>
 
 ```haskell-bg
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
   case lookup "username" b of
@@ -756,7 +680,7 @@ class: code
 </code></pre>
 
 ```haskell-bg
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
   case lookup "username" b of
@@ -786,7 +710,7 @@ redirect :: ByteString -> Response
 </code></pre>
 
 ```haskell-bg
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
   case lookup "username" b of
@@ -819,7 +743,7 @@ setCookie :: Cookie -> Response -> Response
 </code></pre>
 
 ```haskell-bg
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
   case lookup "username" b of
@@ -838,7 +762,7 @@ setCookie :: Cookie -> Response -> Response
 class: code
 
 ```haskell
-loginPost :: Request -> IO Response
+loginPost :: Request -> Response
 loginPost request = do
   b <- params request
   case lookup "username" b of
@@ -1108,10 +1032,11 @@ class: code
 
 ```haskell
 html ::           ByteString -> Response
-html        =
+html        body =
   responseLBS
     status200
     [("Content-Type", "text/html")]
+    body
 ```
 
 ---
@@ -1120,10 +1045,11 @@ class: code
 
 ```haskell
 html :: Status -> ByteString -> Response
-html status =
+html status body =
   responseLBS
     status
     [("Content-Type", "text/html")]
+    body
 ```
 
 ---
@@ -1352,18 +1278,6 @@ class: center, middle, section-aqua, heading-white
 class: code
 
 ```haskell
-loginGet :: IO Response
-
-loginPost :: Request -> IO Response
-
-userGet :: User -> Request -> IO Response
-```
-
----
-
-class: code
-
-```haskell
 routes = do
   get "/login" $
     ...
@@ -1386,7 +1300,7 @@ routes
 class: code
 
 ```haskell
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   ???
 ```
@@ -1408,7 +1322,7 @@ pathInfo :: Request -> [Text]
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   ???
 
@@ -1437,7 +1351,7 @@ pathInfo :: Request -> [Text]
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   case pathInfo request of
     ["login"] ->
@@ -1466,7 +1380,7 @@ pathInfo :: Request -> [Text]
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   case pathInfo request of
     ["login"] ->
@@ -1491,6 +1405,18 @@ class: image, top
 
 class: image, top
 
+<img src="http://www1.idc.ac.il/coursesftp/cs/j2ee/tutorials/first-servlet/troubleshooting_404.jpg" />
+
+---
+
+class: image, top
+
+<img src="http://content.leansentry.com/Blogs/404NotFound/404NotFoundError_IIS7.png" />
+
+---
+
+class: image, top
+
 <img src="https://chrismorgan.info/media/images/github-links-case-study/github-404.png" />
 
 ---
@@ -1510,7 +1436,7 @@ class: code
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   case pathInfo request of
     ["login"] ->
@@ -1542,7 +1468,7 @@ class: code
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   case pathInfo request of
     ["login"] ->
@@ -1579,7 +1505,7 @@ notFound =
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes request =
   case pathInfo request of
     ["login"] ->
@@ -1595,6 +1521,13 @@ notFound :: Response
 notFound =
   html status404 $ "<body>Not found"
 ```
+
+---
+
+class: center, middle, section-aqua, heading-white
+background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+
+# Data + Functions
 
 ---
 
@@ -1634,7 +1567,7 @@ requestMethod :: Request -> Method
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes req =
   case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
@@ -1653,7 +1586,7 @@ requestMethod :: Request -> Method
 class: code
 
 ```haskell
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes req =
   case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
@@ -1687,7 +1620,7 @@ class: code
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
+routes :: Request -> Response
 routes req =
   case (requestMethod req, pathInfo req) of
     ("GET", ["login"]) ->
@@ -1754,7 +1687,40 @@ class: image, top
 class: code
 
 ```haskell
-routes :: Request -> IO Response
+routes :: Request -> Response
+routes req =
+
+  case (requestMethod req, pathInfo req) of
+    ("GET", ["login"]) ->
+        loginGet
+    ("POST", ["login"]) ->
+        loginPost req
+    ("GET", ["profile", user]) ->
+        userGet user req
+    _ ->
+        notFound
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">routes :: Request -> Response
+
+
+
+
+        loginGet
+
+        loginPost
+
+        userGet
+
+        notFound
+</code></pre>
+
+```haskell-bg
+routes :: Request -> Response
 routes req =
 
   case (requestMethod req, pathInfo req) of
@@ -1786,8 +1752,8 @@ class: code
 </code></pre>
 
 ```haskell-bg
-routes :: Request -> IO Response
-routes     =
+routes :: Request -> Response
+routes req =
   -- https://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
@@ -1798,44 +1764,100 @@ routes     =
         userGet <$ string "profile" <*> var
     ]
         notFound
+        req
+```
+
+---
+
+background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cada4?dpr=2&auto=format&fit=crop&w=1500&h=1875&q=80&cs=tinysrgb&crop=&bg=)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+class: code
+
+```haskell
+userGet ::
+  User ->
+  Request -> Response
+userGet user request =
+  case getCookie request "session" of
+    Nothing ->
+      redirect "/login"
+    Just session ->
+      if session /= user then
+        html status403 $
+          "<body>Not permitted"
+      else
+        html status200 $
+          "<body>Hello"
 ```
 
 ---
 
 class: code
 
-<pre><code class="haskell haskell-fg">routes :: Request -> IO Response
-
-
-
-
-        loginGet
-
-        loginPost
-
-        userGet
-
-        notFound
-</code></pre>
-
-```haskell-bg
-routes :: Request -> IO Response
-routes     =
-  -- https://hackage.haskell.org/package/waitra
-  waitraMiddleware [
-      routeGet $
-        loginGet <* string "login"
-    , routePost $
-        loginPost <* string "login"
-    , routeGet $
-        userGet <$ string "profile" <*> var
-    ]
-        notFound
+```haskell
+withUser ::
+  (User -> Request -> Response) ->
+  Request -> Response
+withUser with request =
+  case getCookie request "session" of
+    Nothing ->
+      redirect "/login"
+    Just session ->
+      with session
 ```
+
 ---
 
-background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cada4?dpr=2&auto=format&fit=crop&w=1500&h=1875&q=80&cs=tinysrgb&crop=&bg=)
+class: code
 
+```haskell
+withUser ::
+  (User -> Request -> Response) ->
+  Request -> Response
+
+routes :: Request -> Response
+routes req =
+  case (requestMethod req, pathInfo req) of
+    ("GET", ["profile", user]) ->
+      withUser userGet req
+```
+
+
+---
+
+class: code
+
+```haskell
+withUser ::
+  (User -> Request -> Response) ->
+  Request -> Response
+
+routes :: Request -> Response
+routes req =
+  case (requestMethod req, pathInfo req) of
+    ("GET", ["profile", user]) ->
+      withUser userGet req
+    ("GET", []) ->
+      withUser homeGet req
+```
 
 
 
@@ -1867,7 +1889,7 @@ class: center, middle, section-aqua, heading-white
 class: code
 
 ```haskell
-type Application = Request -> IO Response
+type Application = Request -> Response
 ```
 
 ---
@@ -1875,7 +1897,7 @@ type Application = Request -> IO Response
 class: code
 
 ```haskell
-type Application = Request -> IO Response
+type Application = Request -> Response
 
 
 run :: Port -> Application -> IO ()
@@ -1886,7 +1908,7 @@ run :: Port -> Application -> IO ()
 class: code
 
 ```haskell
-type Application = Request -> IO Response
+type Application = Request -> Response
 
 -- http://hackage.haskell.org/package/warp
 run :: Port -> Application -> IO ()
@@ -1901,7 +1923,7 @@ run :: Port -> Application -> IO ()
 class: code
 
 ```haskell
-type Application = Request -> IO Response
+type Application = Request -> Response
 
 -- http://hackage.haskell.org/package/warp
 run :: Port -> Application -> IO ()
@@ -1932,51 +1954,56 @@ class: image, bottom
 
 class: code
 
-```haskell
-type Application =
-  Request ->
-  IO Response
-```
-
----
-
-class: code
-
-```haskell
-type Application =
-  Request ->
-  (Response -> IO ResponseReceived) ->
-  IO ResponseReceived
-```
-
-???
-
-- See resources at the end
-
----
-
-class: code
-
-<pre><code class="haskell haskell-fg">&nbsp;
+<pre><code class="haskell haskell-fg">type Application = Request ->    Response
 
 
 
-
-routes :: Request -> IO Response
+routes :: Application
 routes request         =
   case pathInfo request of
     ["login"] ->
-      return $
+
         html "..."
 </code></pre>
 
 ```haskell-bg
-type Application =
-  Request ->
-  (Response -> IO ResponseReceived) ->
-  IO ResponseReceived
+type Application = Request ->    Response
 
-routes :: Request -> IO Response
+
+
+routes :: Application
+routes request         =
+  case pathInfo request of
+    ["login"] ->
+
+        html "..."
+```
+
+???
+
+- "But this is haskell and we need to be able to do side effects"
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">                              IO
+
+
+
+
+
+
+
+      return
+</code></pre>
+
+```haskell-bg
+type Application = Request -> IO Response
+
+
+
+routes :: Application
 routes request         =
   case pathInfo request of
     ["login"] ->
@@ -1989,7 +2016,6 @@ routes request         =
 class: code
 
 <pre><code class="haskell haskell-fg">&nbsp;
-
   (Response -> IO ResponseReceived) ->
 
 
@@ -2001,8 +2027,7 @@ class: code
 </code></pre>
 
 ```haskell-bg
-type Application =
-  Request ->
+type Application = Request ->
   (Response -> IO ResponseReceived) ->
   IO ResponseReceived
 
@@ -2013,6 +2038,10 @@ routes request respond =
       respond $
         html "..."
 ```
+
+???
+
+- See resources at the end
 
 
 
@@ -2055,7 +2084,7 @@ class: center, middle, section-aqua, heading-white
 
 class: center, middle, section-aqua, heading-white
 
-# Request -> IO Response
+# Request -> Response
 
 ---
 
@@ -2064,8 +2093,16 @@ class: center, middle, section-aqua, heading-white
 - [wai](https://hackage.haskell.org/package/wai)
 - [http-types](https://hackage.haskell.org/package/http-types)
 - [cookie](https://hackage.haskell.org/package/cookie)
-- [http-media](https://hackage.haskell.org/package/http-media)
-- [wai-extra](https://hackage.haskell.org/package/wai-extra)
+
+---
+
+class: image, top
+
+<img src="http://www1.idc.ac.il/coursesftp/cs/j2ee/tutorials/first-servlet/troubleshooting_404.jpg" />
+
+---
+
+background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cada4?dpr=2&auto=format&fit=crop&w=1500&h=1875&q=80&cs=tinysrgb&crop=&bg=)
 
 ---
 
