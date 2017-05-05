@@ -474,6 +474,35 @@ post "/login" $ do
 
 class: code
 
+<pre><code class="haskell haskell-fg">&nbsp;
+          param
+
+
+
+
+param ::
+  ByteString -> Request -> Maybe ByteString
+</code></pre>
+
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
+
+
+param ::
+  ByteString -> Request -> Maybe ByteString
+```
+
+???
+
+- This is a _massive_ lie
+
+---
+
+class: code
+
 ```haskell-fgw
 
 
@@ -645,80 +674,17 @@ class: code
 
 ```haskell
 loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
+loginPost request =
+  let
+    user = param "username" request
+  in
     ...
 
 
 
 
-params :: Request -> IO [(Text, Maybe Text)]
-```
-
----
-
-class: code
-
-<pre><code class="haskell haskell-fg">&nbsp;
-
-
-  case lookup "username" b of
-    Nothing ->
-      ???
-
-    Just user ->
-      ...
-
--- http://hackage.haskell.org/package/base/docs
---   /Data-List.html#v:lookup
-lookup :: Eq a => a -> [(a, b)] -> Maybe b
-</code></pre>
-
-```haskell-bg
-loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
-  case lookup "username" b of
-    Nothing ->
-      ???
-
-    Just user ->
-      ...
-
--- http://hackage.haskell.org/package/base/docs
---   /Data-List.html#v:lookup
-lookup :: Eq a => a -> [(a, b)] -> Maybe b
-```
-
----
-
-class: image, top
-
-<img src="images/scotty_missing_param.png" />
-
----
-
-class: code
-
-<pre><code class="haskell haskell-fg">&nbsp;
-
-
-
-
-      responseLBS status400 [] $
-        "&lt;body>Bad request"
-</code></pre>
-
-```haskell-bg
-loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
-  case lookup "username" b of
-    Nothing ->
-      responseLBS status400 [] $
-        "<body>Bad request"
-    Just user ->
-      ...
+param :: ByteString ->
+  Request -> IO [(ByteString, Maybe ByteString)]
 ```
 
 ---
@@ -731,25 +697,19 @@ class: code
 
 
 
-
-
-      ...
-        redirect ("/profile/" <> user)
+      redirect ("/profile/" <> user)
 
 redirect :: ByteString -> Response
 </code></pre>
 
 ```haskell-bg
 loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
-  case lookup "username" b of
-    Nothing ->
-      responseLBS status400 [] $
-        "<body>Bad request"
-    Just user ->
-      ...
-        redirect ("/profile/" <> user)
+loginPost request =
+  let
+    user = param "username" request
+  in
+    ...
+      redirect ("/profile/" <> user)
 
 redirect :: ByteString -> Response
 ```
@@ -763,10 +723,7 @@ class: code
 
 
 
-
-
-
-      setCookie ("session", user)
+    setCookie ("session", user)
 
 
 setCookie :: Cookie -> Response -> Response
@@ -774,15 +731,12 @@ setCookie :: Cookie -> Response -> Response
 
 ```haskell-bg
 loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
-  case lookup "username" b of
-    Nothing ->
-      responseLBS status400 [] $
-        "<body>Bad request"
-    Just user ->
-      setCookie ("session", user) $
-        redirect ("/profile/" <> user)
+loginPost request =
+  let
+    user = param "username" request
+  in
+    setCookie ("session", user) $
+      redirect ("/profile/" <> user)
 
 setCookie :: Cookie -> Response -> Response
 ```
@@ -793,15 +747,12 @@ class: code
 
 ```haskell
 loginPost :: Request -> Response
-loginPost request = do
-  b <- params request
-  case lookup "username" b of
-    Nothing ->
-      responseLBS status400 [] $
-        "<body>Bad request"
-    Just user ->
-      setCookie ("session", user) $
-        redirect ("/profile/" <> user)
+loginPost request =
+  let
+    user = param "username" request
+  in
+    setCookie ("session", user) $
+      redirect ("/profile/" <> user)
 ```
 
 ---
