@@ -41,12 +41,6 @@ class: middle
 
 ---
 
-class: center, middle, section-aqua, heading-white
-
-# Why?
-
----
-
 ## Haskell Web Frameworks
 
 - Happstack
@@ -414,11 +408,11 @@ html body =
 class: code
 
 ```haskell
--- hackage: wai
+-- http://hackage.haskell.org/package/wai
 responseLBS ::
   Status -> [Header] -> ByteString -> Response
 
--- hackage: http-types
+-- http://hackage.haskell.org/package/http-types
 status200 :: Status
 
 html :: ByteString -> Response
