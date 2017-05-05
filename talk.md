@@ -171,7 +171,7 @@ class: code
 
 
 
-        DataIn      ->    DataOut
+        DataIn      ->     DataOut
 ```
 
 ---
@@ -185,7 +185,7 @@ class: code
            |                  |
            |                  |
            v                  |
-        DataIn      ->    DataOut
+        DataIn      ->     DataOut
 ```
 
 ---
@@ -199,7 +199,7 @@ class: code
         Request            Response
            |                  ^
            v                  |
-        DataIn      ->    DataOut
+        DataIn      ->     DataOut
 ```
 
 ---
@@ -220,7 +220,7 @@ class: code
         Request            Response
            |                  ^
            v                  |
-        DataIn      ->    DataOut
+        DataIn      ->     DataOut
 ```
 
 ---
