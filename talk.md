@@ -171,6 +171,9 @@ class: code
 
 
 
+
+
+
         DataIn      ->     DataOut
 ```
 
@@ -179,6 +182,9 @@ class: code
 class: code
 
 ```haskell
+
+
+
        ByteString         ByteString
            |                  ^
            |                  |
@@ -193,6 +199,9 @@ class: code
 class: code
 
 ```haskell
+
+
+
        ByteString         ByteString
            |                  ^
            v                  |
@@ -210,10 +219,16 @@ class: code
 
 
 
+
+
+
         Request            Response
 ```
 
 ```haskell-bg
+
+
+
        ByteString         ByteString
            |                  ^
            v                  |
@@ -230,24 +245,11 @@ class: code
 ```haskell
 
 
+
+
+
 type Application =
         Request      ->    Response
-```
-
----
-
-class: code
-
-```haskell
-
-data Request
-
-
-
-
-
-
-data Response
 ```
 
 ---
