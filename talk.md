@@ -164,35 +164,74 @@ class: center, middle, section-aqua, heading-white
 
 class: code
 
-```haskell-fg
+```haskell
 
 
 
-        Request      ->    Response
+
+
+
+        LogicIn      ->    LogicOut
 ```
 
-```haskell-bg
-        ByteString   ->   ByteString
+---
+
+class: code
+
+```haskell
+       ByteString         ByteString
+           |                  ^
+           |                  |
+           |                  |
+           |                  |
+           v                  |
+        LogicIn      ->    LogicOut
+```
+
+---
+
+class: code
+
+```haskell
+       ByteString         ByteString
            |                  ^
            v                  |
-        Request      ->    Response
+        Request            Response
            |                  ^
            v                  |
         LogicIn      ->    LogicOut
 ```
+
+---
+
+class: code
+
+```haskell-fg
+
+
+
+        Request            Response
+```
+
+```haskell-bg
+       ByteString         ByteString
+           |                  ^
+           v                  |
+        Request            Response
+           |                  ^
+           v                  |
+        LogicIn      ->    LogicOut
+```
+
 ---
 
 class: code
 
 ```haskell
 
-data Request
 
-
-
-
-
-data Response
+type Application =
+        Request      ->    Response
 ```
 
 ---
@@ -207,12 +246,8 @@ data Request
 
 
 
+
 data Response
-
-
-
-
-type Application = Request -> Response
 ```
 
 ---
@@ -226,13 +261,13 @@ data Request = Request {
   , requestMethod :: Method
   , requestHeaders :: [Header]
   ...
+  }
 
 data Response = Response {
     responseStatus :: Status
   , responseHeaders :: [Header]
   ...
-
-type Application = Request -> Response
+  }
 ```
 
 ---
