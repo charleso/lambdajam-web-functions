@@ -162,6 +162,12 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
+class: image, middle
+
+<img src="http://blog.outsourcing-partners.com/wp-content/uploads/2012/11/arch.png" />
+
+---
+
 class: code
 
 ```haskell
@@ -701,6 +707,15 @@ mapResponseHeaders ::
 
 -- http://hackage.haskell.org/package/cookie
 renderCookie :: Cookie -> ByteString
+```
+
+---
+
+class: code
+
+```haskell
+loginPost :: Request -> Response
+loginPost request =
 ```
 
 ---
