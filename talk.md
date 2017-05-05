@@ -162,19 +162,24 @@ class: center, middle, section-aqua, heading-white
 
 ---
 
-<table style="height: 100%">
-  <tbody>
-    <tr>
-      <td width="10%" style="background-color: red">Web Server</td>
-      <td width="10%" style="background-color: yellow">Web Application</td>
-      <td rowspan="2" width="40%" style="background-color: blue">Application</td>
-    </tr>
-    <tr>
-      <td colspan="2" width="10%" style="background-color: green">Foo???</td>
-    </tr>
-  </tbody>
-</table>
+class: code
 
+```haskell-fg
+
+
+
+        Request      ->    Response
+```
+
+```haskell-bg
+        ByteString   ->   ByteString
+           |                  ^
+           v                  |
+        Request      ->    Response
+           |                  ^
+           v                  |
+        LogicIn      ->    LogicOut
+```
 ---
 
 class: code
@@ -216,16 +221,16 @@ class: code
 
 ```haskell
 -- http://hackage.haskell.org/package/wai
-data Request
+data Request = Request {
+    pathInfo :: [Text]
+  , requestMethod :: Method
+  , requestHeaders :: [Header]
+  ...
 
-pathInfo :: Request -> [Text]
-requestMethod :: Request -> Method
-requestHeaders :: Request -> [Header]
-
-data Response
-
-responseStatus :: Response -> Status
-responseHeaders :: Response -> [Header]
+data Response = Response {
+    responseStatus :: Status
+  , responseHeaders :: [Header]
+  ...
 
 type Application = Request -> Response
 ```
@@ -552,6 +557,31 @@ class: code
 setCookie :: Cookie -> Response -> Response
 setCookie cookie =
   ???
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+
+
+-- http://hackage.haskell.org/package/wai
+mapResponseHeaders ::
+ ([Header] -> [Header]) -> Response -> Response
+</code></pre>
+
+```haskell-bg
+setCookie :: Cookie -> Response -> Response
+setCookie cookie =
+  ???
+
+
+-- http://hackage.haskell.org/package/wai
+mapResponseHeaders ::
+ ([Header] -> [Header]) -> Response -> Response
 ```
 
 ---
@@ -1285,14 +1315,6 @@ routes = do
     ...
   get "/profile/:user" $
     ...
-```
-
----
-
-class: code
-
-```haskell
-routes
 ```
 
 ---
