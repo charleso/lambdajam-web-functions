@@ -728,6 +728,7 @@ class: code
 ```haskell
 loginPost :: Request -> Response
 loginPost request =
+  ???
 ```
 
 ---
@@ -1041,10 +1042,6 @@ get "/profile/:user" $ do
 
 - Just ignore for now
 
-???
-
-- Just ignore for now
-
 ---
 
 class: code
@@ -1146,6 +1143,7 @@ class: code
 ```haskell
 userGet ::         Request -> Response
 userGet      request =
+  ???
 ```
 
 ---
@@ -1822,87 +1820,6 @@ background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cad
 
 
 
-
-
-
-
-
-
-
-
-
-
----
-
-class: code
-
-```haskell
-userGet ::
-  User ->
-  Request -> Response
-userGet user request =
-  case getCookie request "session" of
-    Nothing ->
-      redirect "/login"
-    Just session ->
-      if session /= user then
-        html status403 $
-          "<body>Not permitted"
-      else
-        html status200 $
-          "<body>Hello"
-```
-
----
-
-class: code
-
-```haskell
-withUser ::
-  (User -> Request -> Response) ->
-  Request -> Response
-withUser with request =
-  case getCookie request "session" of
-    Nothing ->
-      redirect "/login"
-    Just session ->
-      with session
-```
-
----
-
-class: code
-
-```haskell
-withUser ::
-  (User -> Request -> Response) ->
-  Request -> Response
-
-routes :: Request -> Response
-routes req =
-  case (requestMethod req, pathInfo req) of
-    ("GET", ["profile", user]) ->
-      withUser userGet req
-```
-
-
----
-
-class: code
-
-```haskell
-withUser ::
-  (User -> Request -> Response) ->
-  Request -> Response
-
-routes :: Request -> Response
-routes req =
-  case (requestMethod req, pathInfo req) of
-    ("GET", ["profile", user]) ->
-      withUser userGet req
-    ("GET", []) ->
-      withUser homeGet req
-```
 
 
 
