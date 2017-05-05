@@ -2078,7 +2078,7 @@ class: center, middle, section-aqua, heading-white
 
 ## Resources
 
-- http://blog.infinitenegativeutility.com/2016/8/resources--laziness--and-continuation-passing-style
 - https://github.com/charleso/lambdajam-web-functions
+- http://blog.infinitenegativeutility.com/2016/8/resources--laziness--and-continuation-passing-style
 - "Build yourself a Haskell web framework"
   - https://www.youtube.com/watch?v=etuSnom2v2M
