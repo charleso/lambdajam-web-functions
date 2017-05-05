@@ -158,7 +158,7 @@ class: center, middle, section-aqua, heading-white
 
 class: image, middle
 
-<img src="http://blog.outsourcing-partners.com/wp-content/uploads/2012/11/arch.png" />
+<img src="https://i-msdn.sec.s-msft.com/dynimg/IC80465.gif" />
 
 ---
 
@@ -2071,6 +2071,7 @@ background-image: url(https://images.unsplash.com/photo-1485550409059-9afb054cad
 ---
 
 class: center, middle, section-aqua, heading-white
+background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
 
 # Data + Functions
 
