@@ -707,9 +707,18 @@ renderCookie :: Cookie -> ByteString
 
 class: code
 
-```haskell
-loginPost :: Request -> Response
-loginPost request =
+```haskell-fgw
+
+          param
+  setCookie
+  redirect
+```
+
+```haskell-bg
+post "/login" $ do
+  user <- param "username"
+  setCookie ("session", user)
+  redirect ("/profile/" <> user)
 ```
 
 ---
@@ -719,14 +728,35 @@ class: code
 ```haskell
 loginPost :: Request -> Response
 loginPost request =
+```
+
+---
+
+class: code
+
+<pre><code class="haskell haskell-fg">&nbsp;
+
+
+    user = param "username" request
+
+
+
+
+param ::
+  ByteString -> Request -> Maybe ByteString
+</code></pre>
+
+```haskell-bg
+loginPost :: Request -> Response
+loginPost request =
   let
     user = param "username" request
   in
     ...
 
 
-param :: ByteString ->
-  Request -> IO [(ByteString, Maybe ByteString)]
+param ::
+  ByteString -> Request -> Maybe ByteString
 ```
 
 ---
