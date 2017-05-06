@@ -303,6 +303,8 @@ background-image: url(images/know_this.jpg)
 
 ???
 
+- Scene in Jurassic Park
+- "It's a Unix sytem, I know this"
 - We're functional programmers - we know this
 
 ---
@@ -1725,6 +1727,10 @@ routes = do
     user <- getParam "user"
 ```
 
+???
+
+- Sinatra
+
 ---
 
 class: code
@@ -1815,6 +1821,11 @@ routes req =
         notFound
 ```
 
+???
+
+- Let's try an experiment
+- Can we keep our type signature and re-use our functions?
+
 ---
 
 class: code
@@ -1847,6 +1858,12 @@ routes req =
         notFound
         req
 ```
+
+???
+
+- Some of those routing libraries required data types
+- I like the applicative style
+- No HList
 
 ---
 
@@ -2079,23 +2096,17 @@ routes request respond =
 
 ---
 
-class: image, middle
-
-<a href="https://www.reddit.com/r/haskell/comments/16kqe0/recommended_haskell_web_framework_for_beginners/">
-  <img src="images/recommended_haskell.png" />
-</a>
-
----
-
 class: center, middle, section-aqua, heading-white
 
 # What is a web application?
 
 ---
 
-class: center, middle, section-aqua, heading-white
+class: code, middle, center
 
-# Request -> Response
+```haskell
+type Application = Request -> Response
+```
 
 ---
 
@@ -2123,6 +2134,18 @@ class: image, top
 class: image, middle
 
 <img src="images/compose.jpg" />
+
+---
+
+class: image, middle
+
+<a href="https://www.reddit.com/r/haskell/comments/16kqe0/recommended_haskell_web_framework_for_beginners/">
+  <img src="images/recommended_haskell.png" />
+</a>
+
+???
+
+- So what web framework should I use?
 
 ---
 
