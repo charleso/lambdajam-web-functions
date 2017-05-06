@@ -1991,6 +1991,7 @@ routes request         =
   case pathInfo request of
     ["login"] ->
 
+
         html "..."
 </code></pre>
 
@@ -2003,6 +2004,7 @@ routes :: Application
 routes request         =
   case pathInfo request of
     ["login"] ->
+
 
         html "..."
 ```
@@ -2022,6 +2024,7 @@ class: code
 
 
 
+                 do
 
       return
 </code></pre>
@@ -2034,7 +2037,8 @@ type Application = Request -> IO Response
 routes :: Application
 routes request         =
   case pathInfo request of
-    ["login"] ->
+    ["login"] -> do
+      _ <- runDb ...
       return $
         html "..."
 ```
@@ -2051,6 +2055,7 @@ class: code
                respond
 
 
+
       respond
 </code></pre>
 
@@ -2062,7 +2067,8 @@ type Application = Request ->
 routes :: Application
 routes request respond =
   case pathInfo request of
-    ["login"] ->
+    ["login"] -> do
+      _ <- runDb ...
       respond $
         html "..."
 ```
