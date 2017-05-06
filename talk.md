@@ -164,6 +164,10 @@ class: image, middle
 
 <img src="images/web_architecture.gif" />
 
+???
+
+- I can't draw so...
+
 ---
 
 class: code
@@ -180,6 +184,11 @@ class: code
 
         DataIn      ->     DataOut
 ```
+
+???
+
+- This is the core of your application
+- The business logic
 
 ---
 
@@ -197,6 +206,10 @@ class: code
            v                  |
         DataIn      ->     DataOut
 ```
+
+???
+
+- Not just HTTP, could be thrift/stdin/etc
 
 ---
 
@@ -296,6 +309,11 @@ data Response = Response {
   ...
   }
 ```
+
+???
+
+- Not quite true
+- Doesn't include body here
 
 ---
 
@@ -1756,13 +1774,13 @@ class: image, top
 
 ## Haskell Routing
 
-- [web-routes](http://hackage.haskell.org/package/web-routes)
-- [web-routes-boomerang](http://hackage.haskell.org/package/web-routes-boomerang)
-- [wai-routing](http://hackage.haskell.org/package/wai-routing)
+- [web-routes](https://hackage.haskell.org/package/web-routes)
+- [web-routes-boomerang](https://hackage.haskell.org/package/web-routes-boomerang)
+- [wai-routing](https://hackage.haskell.org/package/wai-routing)
 - [wai-routes](https://hackage.haskell.org/package/wai-routes)
 - [waitra](https://hackage.haskell.org/package/waitra)
-- [snap-web-routes](http://hackage.haskell.org/package/snap-web-routes)
-- [reroute](http://hackage.haskell.org/package/reroute)
+- [snap-web-routes](https://hackage.haskell.org/package/snap-web-routes)
+- [reroute](https://hackage.haskell.org/package/reroute)
 
 ???
 
@@ -1832,7 +1850,7 @@ class: code
 
 <pre><code class="haskell haskell-fg">&nbsp;
 
-  -- https://hackage.haskell.org/package/waitra
+  -- http://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
                  <* string "login"
@@ -1846,7 +1864,7 @@ class: code
 ```haskell-bg
 routes :: Request -> Response
 routes req =
-  -- https://hackage.haskell.org/package/waitra
+  -- http://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
         loginGet <* string "login"
