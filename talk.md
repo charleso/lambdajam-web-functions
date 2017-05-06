@@ -1697,6 +1697,7 @@ class: code
 
 
     ("GET", ["profile", user]) ->
+              user
 </code></pre>
 
 ```haskell-bg
@@ -1853,6 +1854,13 @@ routes req =
 class: image, middle
 
 <img src="images/compose.jpg" />
+
+???
+
+- At Ambiata we love the chopstick
+  - Symmetrical
+  - Reuse
+- https://stock.adobe.com/au/stock-photo/set-of-chopsticks/57305678
 
 
 
