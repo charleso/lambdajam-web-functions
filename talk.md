@@ -1285,7 +1285,7 @@ class: code
 
 
         html status403 $
-          "&lt;body>Not permitted"
+          "&lt;body>>Unauthorized"
 
         html status200 $
           "&lt;body>Hello"
@@ -1302,7 +1302,7 @@ userGet user request =
     Just session ->
       if session /= user then
         html status403 $
-          "<body>Not permitted"
+          "<body>Unauthorized"
       else
         html status200 $
           "<body>Hello"
@@ -1323,7 +1323,7 @@ userGet user request =
     Just session ->
       if session /= user then
         html status403 $
-          "<body>Not permitted"
+          "<body>Unauthorized"
       else
         html status200 $
           "<body>Hello"
