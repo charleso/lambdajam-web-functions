@@ -158,7 +158,7 @@ class: center, middle, section-aqua, heading-white
 
 class: image, middle
 
-<img src="https://i-msdn.sec.s-msft.com/dynimg/IC80465.gif" />
+<img src="images/web_architecture.gif" />
 
 ---
 
@@ -193,6 +193,27 @@ class: code
            v                  |
         DataIn      ->     DataOut
 ```
+
+---
+
+class: code
+
+```haskell
+
+
+
+       ByteString         ByteString
+           |                  ^
+           |                  |
+           |                  |
+           |                  |
+           v                  |
+        DataIn      ->     DataOut
+```
+
+<pre><code class="hljs warning">GET /index.html HTTP/1.1
+Host: example.com
+</code></pre>
 
 ---
 
@@ -280,7 +301,7 @@ class: center, middle, section-yellow, heading-black
 
 ---
 
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 ???
 
@@ -448,7 +469,7 @@ html body =
 ---
 
 class: center, middle, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 # Data + Functions
 
@@ -833,7 +854,7 @@ loginPost request =
 ---
 
 class: center, middle, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 # Data + Functions
 
@@ -1306,7 +1327,7 @@ userGet user request =
 ---
 
 class: center, middle, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 # Data + Functions
 
@@ -1450,19 +1471,19 @@ class: image, top
 
 class: image, top
 
-<img src="http://www1.idc.ac.il/coursesftp/cs/j2ee/tutorials/first-servlet/troubleshooting_404.jpg" />
+<img src="images/404_j2ee.jpg" />
 
 ---
 
 class: image, top
 
-<img src="http://content.leansentry.com/Blogs/404NotFound/404NotFoundError_IIS7.png" />
+<img src="images/404_net.png" />
 
 ---
 
 class: image, top
 
-<img src="https://chrismorgan.info/media/images/github-links-case-study/github-404.png" />
+<img src="images/404_github.png" />
 
 ---
 
@@ -1570,7 +1591,7 @@ notFound =
 ---
 
 class: center, middle, section-aqua, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 # Data + Functions
 
@@ -1750,7 +1771,7 @@ routes req =
 
 class: code
 
-<pre><code class="haskell haskell-fg">routes :: Request -> Response
+<pre><code class="haskell haskell-fg">          Request -> Response
 
 
 
@@ -1915,7 +1936,7 @@ main =
 
 class: image, bottom
 
-<img src="http://berkreviews.com/wp-content/uploads/2016/12/untitled1.png" />
+<img src="images/liar.png" />
 
 ---
 
@@ -2065,7 +2086,7 @@ class: center, middle, section-aqua, heading-white
 
 class: image, top
 
-<img src="http://www1.idc.ac.il/coursesftp/cs/j2ee/tutorials/first-servlet/troubleshooting_404.jpg" />
+<img src="images/404_j2ee.jpg" />
 
 ---
 
@@ -2076,7 +2097,7 @@ class: image, middle
 ---
 
 class: center, middle, section-aqua, heading-white
-background-image: url(https://georgebrock.github.io/talks/command-line-ruby/images/lex.jpg)
+background-image: url(images/know_this.jpg)
 
 # Data + Functions
 
