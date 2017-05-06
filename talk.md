@@ -1285,7 +1285,7 @@ class: code
 
 
         html status403 $
-          "&lt;body>>Unauthorized"
+          "&lt;body>Unauthorized"
 
         html status200 $
           "&lt;body>Hello"
@@ -1860,6 +1860,7 @@ class: image, middle
 - At Ambiata we love the chopstick
   - Symmetrical
   - Reuse
+- Could we do this with Scotty?
 - https://stock.adobe.com/au/stock-photo/set-of-chopsticks/57305678
 
 
