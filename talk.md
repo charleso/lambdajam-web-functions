@@ -2124,7 +2124,7 @@ type Application = Request -> Response
 
 ---
 
-class: code, middle
+class: code, middle, center
 
 <pre><code class="hljs warning">Warning: Pattern match(es) are non-exhaustive
 </code></pre>
