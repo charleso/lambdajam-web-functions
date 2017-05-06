@@ -15,6 +15,10 @@ class: middle
   <img src="images/recommended_haskell.png" width="700" />
 </a>
 
+???
+
+- Coming from a Java background...
+
 ---
 
 class: middle
@@ -295,17 +299,18 @@ data Response = Response {
 
 ---
 
-class: center, middle, section-yellow, heading-black
-
-# Data + Functions
-
----
-
 background-image: url(images/know_this.jpg)
 
 ???
 
 - We're functional programmers - we know this
+
+---
+
+class: center, middle, section-aqua, heading-white
+background-image: url(images/know_this.jpg)
+
+# Data + Functions
 
 
 
@@ -2081,6 +2086,13 @@ class: center, middle, section-aqua, heading-white
 - [wai](https://hackage.haskell.org/package/wai)
 - [http-types](https://hackage.haskell.org/package/http-types)
 - [cookie](https://hackage.haskell.org/package/cookie)
+
+---
+
+class: code, middle
+
+<pre><code class="hljs warning">Warning: Pattern match(es) are non-exhaustive
+</code></pre>
 
 ---
 
