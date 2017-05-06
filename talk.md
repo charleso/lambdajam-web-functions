@@ -563,8 +563,7 @@ class: code
 
 
 
-param ::
-  ByteString -> Request -> Maybe ByteString
+param :: ByteString -> Request -> ByteString
 </code></pre>
 
 ```haskell-bg
@@ -574,8 +573,7 @@ post "/login" $ do
   redirect ("/profile/" <> user)
 
 
-param ::
-  ByteString -> Request -> Maybe ByteString
+param :: ByteString -> Request -> ByteString
 ```
 
 ???
@@ -791,8 +789,7 @@ class: code
 
 
 
-param ::
-  ByteString -> Request -> Maybe ByteString
+param :: ByteString -> Request -> ByteString
 </code></pre>
 
 ```haskell-bg
@@ -804,8 +801,7 @@ loginPost request =
     ...
 
 
-param ::
-  ByteString -> Request -> Maybe ByteString
+param :: ByteString -> Request -> ByteString
 ```
 
 ---
