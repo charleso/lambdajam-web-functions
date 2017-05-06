@@ -1853,11 +1853,11 @@ class: code
   -- http://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
-                 <* string "login"
+                 <* "login"
     , routePost $
-                  <* string "login"
+                  <* "login"
     , routeGet $
-                <$ string "profile" <*> var
+                <$ "profile" <*> var
     ]
 </code></pre>
 
@@ -1867,11 +1867,11 @@ routes req =
   -- http://hackage.haskell.org/package/waitra
   waitraMiddleware [
       routeGet $
-        loginGet <* string "login"
+        loginGet <* "login"
     , routePost $
-        loginPost <* string "login"
+        loginPost <* "login"
     , routeGet $
-        userGet <$ string "profile" <*> var
+        userGet <$ "profile" <*> var
     ]
         notFound
         req
