@@ -2078,10 +2078,10 @@ routes request respond =
 
 ---
 
-class: middle
+class: image, middle
 
 <a href="https://www.reddit.com/r/haskell/comments/16kqe0/recommended_haskell_web_framework_for_beginners/">
-  <img src="images/recommended_haskell.png" width="700" />
+  <img src="images/recommended_haskell.png" />
 </a>
 
 ---
