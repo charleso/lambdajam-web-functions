@@ -1478,6 +1478,10 @@ class: image, top
 
 <img src="images/404_j2ee.jpg" />
 
+???
+
+- This page is a bug
+
 ---
 
 class: image, top
@@ -1489,6 +1493,11 @@ class: image, top
 class: image, top
 
 <img src="images/404_github.png" />
+
+
+???
+
+- 404 page is part of your application
 
 ---
 
@@ -2112,6 +2121,10 @@ class: center, middle, section-aqua, heading-white
 background-image: url(images/know_this.jpg)
 
 # Data + Functions
+
+???
+
+- You don't need a framework that does everything
 
 ---
 
