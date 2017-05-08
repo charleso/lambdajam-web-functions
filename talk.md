@@ -1980,6 +1980,37 @@ main =
         ...
 ```
 
+---
+
+class: code
+
+```haskell
+type Application = Request -> Response
+
+-- http://hackage.haskell.org/package/warp
+run :: Port -> Application -> IO ()
+
+-- https://hackage.haskell.org/package/scotty
+scotty :: Port -> ScottyM () -> IO ()
+```
+
+---
+
+class: code
+
+```haskell
+type Application = Request -> Response
+
+-- http://hackage.haskell.org/package/warp
+run :: Port -> Application -> IO ()
+
+-- https://hackage.haskell.org/package/scotty
+scotty :: Port -> ScottyM () -> IO ()
+
+-- https://hackage.haskell.org/package/scotty
+scottyApp :: ScottyM () -> IO Application
+```
+
 
 
 
